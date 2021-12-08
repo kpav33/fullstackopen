@@ -1,5 +1,9 @@
 import React from "react";
 
-export default function Total({ exercises1, exercises2, exercises3 }) {
-  return <p>Number of exercises {exercises1 + exercises2 + exercises3}</p>;
+export default function Total({ parts }) {
+  let sum = parts.reduce((accumulator, item) => {
+    return accumulator + item.exercises;
+  }, 0);
+
+  return <p>Number of exercises {sum}</p>;
 }
