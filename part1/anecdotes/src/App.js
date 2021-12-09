@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./App.css";
 
 function App() {
   const anecdotes = [
@@ -12,8 +13,71 @@ function App() {
   ];
 
   const [selected, setSelected] = useState(0);
+  // Alternative option for initial state of votes state
+  /*const [votes, setVotes] = useState({
+    0: 0,
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+  });*/
+  const [votes, setVotes] = useState({});
 
-  return <div>{anecdotes[selected]}</div>;
+  // console.log(selected);
+
+  function getRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
+
+  // Alternative option handleClickVote function
+  /*function handleClickVote() {
+    setVotes((prevVotes) => ({
+      ...prevVotes,
+      [selected]: prevVotes[selected] + 1,
+    }));
+  }*/
+
+  function handleClickVote() {
+    setVotes((prevVotes) => ({
+      ...prevVotes,
+      [selected]: prevVotes[selected] + 1 || 1,
+    }));
+  }
+
+  // console.log(votes);
+
+  function handleClickNext() {
+    setSelected(getRandomNumber(0, anecdotes.length));
+  }
+
+  let conditionVotes = Object.keys(votes).length;
+  let mostVotes;
+  if (conditionVotes) {
+    mostVotes = Object.keys(votes).reduce((a, b) =>
+      votes[a] > votes[b] ? a : b
+    );
+  }
+
+  return (
+    <div>
+      <h2>Anecdotes of the day</h2>
+      <p className="anecdote">{anecdotes[selected]}</p>
+      <p>Has {votes[selected] ? votes[selected] : "0"} votes.</p>
+      <div>
+        <button onClick={handleClickVote}>Vote</button>
+        <button onClick={handleClickNext}>Next anecdote</button>
+      </div>
+      <h2>Anecdote with most votes</h2>
+      {conditionVotes > 0 && (
+        <>
+          <p>{anecdotes[mostVotes]}</p>
+          <p>Has {votes[mostVotes]} votes.</p>
+        </>
+      )}
+    </div>
+  );
 }
 
 export default App;
