@@ -15,8 +15,18 @@ function App() {
       name: newName,
     };
 
-    setPersons((prevPersons) => [...prevPersons, newPerson]);
-    setNewName("");
+    // Prevent the user from being able to add names that already exist in the phonebook
+    const preventDuplicates = persons.every(
+      (person) => person.name.toLowerCase() !== newName.toLowerCase()
+    );
+    // console.log(preventDuplicates);
+
+    if (preventDuplicates) {
+      setPersons((prevPersons) => [...prevPersons, newPerson]);
+      setNewName("");
+    } else {
+      alert(`${newName} is already added to phonebook.`);
+    }
   }
 
   const personsDisplay = persons.map((person) => (
