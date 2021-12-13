@@ -20,12 +20,21 @@ function App() {
     country.name.common.toLowerCase().includes(findCountries.toLowerCase())
   );
 
+  function handleClick(country) {
+    setFindCountries(country);
+  }
+
   let displayCountries =
     countriesFiltered.length < 10
       ? countriesFiltered.length === 0
         ? "No countries found"
         : countriesFiltered.map((country) => (
-            <p key={country.name.common}>{country.name.common}</p>
+            <div key={country.name.common}>
+              <p>{country.name.common}</p>
+              <button onClick={() => handleClick(country.name.common)}>
+                Show
+              </button>
+            </div>
           ))
       : "Too many matches, specify another filter";
 
