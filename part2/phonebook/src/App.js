@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import personService from "./services/persons";
 import "./App.css";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
@@ -14,9 +14,9 @@ function App() {
   // Get data from JSON server and store it into state
   useEffect(() => {
     // console.log("effect");
-    axios.get("http://localhost:3001/persons").then((response) => {
+    personService.getAll().then((initalPersons) => {
       // console.log("Fulfilled");
-      setPersons(response.data);
+      setPersons(initalPersons);
     });
   }, []);
   // console.log("render", persons.length, "persons");
@@ -54,19 +54,17 @@ function App() {
 
     if (preventDuplicates) {
       // Add new person to the server
-      axios
-        .post("http://localhost:3001/persons", newPerson)
-        .then((response) => {
-          setPersons((prevPersons) => [...prevPersons, response.data]);
-          setNewName("");
-          setNewNumber("");
-        });
+      personService.create(newPerson).then((newNote) => {
+        setPersons((prevPersons) => [...prevPersons, newNote]);
+        setNewName("");
+        setNewNumber("");
+      });
     } else {
       alert(`${newName} is already added to phonebook.`);
     }
   }
 
-  // Currently, the numbers that are added to the phonebook are not saved to a backend server. Fix this situation.
+  // Extract the code that handles the communication with the backend into its own module by following the example shown earlier in this part of the course material.
 
   return (
     <div>
