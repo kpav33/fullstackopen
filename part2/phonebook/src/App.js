@@ -36,7 +36,7 @@ function App() {
   // Handle deleting a person
   function handleDeletePerson(id, name) {
     if (window.confirm(`Delete ${name}?`)) {
-      personService.deletePerson(id).then((response) => {
+      personService.deletePerson(id).then(() => {
         setPersons((prevPersons) =>
           prevPersons.filter((person) => person.id !== id)
         );
@@ -72,17 +72,6 @@ function App() {
         setNewNumber("");
       });
     } else {
-      // replace old number logic here
-      // alert(`${newName} is already added to phonebook.`);
-      // const toggleImportanceOf = id => {
-      //   const url = `http://localhost:3001/notes/${id}`
-      //   const note = notes.find(n => n.id === id)
-      //   const changedNote = { ...note, important: !note.important }
-
-      //   axios.put(url, changedNote).then(response => {
-      //     setNotes(notes.map(note => note.id !== id ? note : response.data))
-      //   })
-      // }
       if (
         window.confirm(
           `${newName} is already added to the phonebook, replace the old number with the new one?`
@@ -92,13 +81,12 @@ function App() {
           (person) => person.name.toLowerCase() === newPerson.name.toLowerCase()
         );
         const changedPerson = { ...findPerson, number: newNumber };
-        // console.log(changedPerson);
         personService
           .update(findPerson.id, changedPerson)
-          .then((response) =>
+          .then((updatedPerson) =>
             setPersons((prevPersons) =>
               prevPersons.map((person) =>
-                person.id !== findPerson.id ? person : response
+                person.id !== findPerson.id ? person : updatedPerson
               )
             )
           );
