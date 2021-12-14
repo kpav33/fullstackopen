@@ -72,11 +72,41 @@ function App() {
         setNewNumber("");
       });
     } else {
-      alert(`${newName} is already added to phonebook.`);
+      // replace old number logic here
+      // alert(`${newName} is already added to phonebook.`);
+      // const toggleImportanceOf = id => {
+      //   const url = `http://localhost:3001/notes/${id}`
+      //   const note = notes.find(n => n.id === id)
+      //   const changedNote = { ...note, important: !note.important }
+
+      //   axios.put(url, changedNote).then(response => {
+      //     setNotes(notes.map(note => note.id !== id ? note : response.data))
+      //   })
+      // }
+      if (
+        window.confirm(
+          `${newName} is already added to the phonebook, replace the old number with the new one?`
+        )
+      ) {
+        const findPerson = persons.find(
+          (person) => person.name.toLowerCase() === newPerson.name.toLowerCase()
+        );
+        const changedPerson = { ...findPerson, number: newNumber };
+        // console.log(changedPerson);
+        personService
+          .update(findPerson.id, changedPerson)
+          .then((response) =>
+            setPersons((prevPersons) =>
+              prevPersons.map((person) =>
+                person.id !== findPerson.id ? person : response
+              )
+            )
+          );
+      } else {
+        alert(`${newName} is already added to phonebook.`);
+      }
     }
   }
-
-  // Extract the code that handles the communication with the backend into its own module by following the example shown earlier in this part of the course material.
 
   return (
     <div>
