@@ -16,6 +16,11 @@ function update(id, newObject) {
   return request.then((response) => response.data);
 }
 
-const personService = { getAll, create, update };
+function deletePerson(id) {
+  const request = axios.delete(`${baseUrl}/${id}`);
+  return request.then((response) => response.data);
+}
+
+const personService = { getAll, create, update, deletePerson };
 
 export default personService;

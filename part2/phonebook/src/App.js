@@ -33,6 +33,18 @@ function App() {
     setFilter(event.target.value);
   }
 
+  // Handle deleting a person
+  function handleDeletePerson(id, name) {
+    if (window.confirm(`Delete ${name}?`)) {
+      personService.deletePerson(id).then((response) => {
+        setPersons((prevPersons) =>
+          prevPersons.filter((person) => person.id !== id)
+        );
+      });
+    }
+  }
+
+  // Handle form submitting
   function handleFormSubmit(event) {
     event.preventDefault();
     if (newName === "" || newNumber === "") {
@@ -81,7 +93,11 @@ function App() {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={persons} filter={filter} />
+      <Persons
+        persons={persons}
+        filter={filter}
+        handleDeletePerson={handleDeletePerson}
+      />
     </div>
   );
 }

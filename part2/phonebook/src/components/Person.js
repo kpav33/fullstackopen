@@ -1,9 +1,12 @@
 import React from "react";
 
-export default function Person({ name, number }) {
+export default function Person({ name, number, id, handleDeletePerson }) {
   return (
-    <p>
-      {name} {number}
-    </p>
+    <>
+      <p>
+        {name} {number}
+      </p>
+      <button onClick={() => handleDeletePerson(id, name)}>Delete</button>
+    </>
   );
 }
