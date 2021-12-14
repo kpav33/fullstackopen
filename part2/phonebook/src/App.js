@@ -43,7 +43,8 @@ function App() {
     const newPerson = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
+      // Let server deal with creating IDs
+      // id: persons.length + 1,
     };
 
     // Prevent the user from being able to add names that already exist in the phonebook
@@ -52,13 +53,20 @@ function App() {
     );
 
     if (preventDuplicates) {
-      setPersons((prevPersons) => [...prevPersons, newPerson]);
-      setNewName("");
-      setNewNumber("");
+      // Add new person to the server
+      axios
+        .post("http://localhost:3001/persons", newPerson)
+        .then((response) => {
+          setPersons((prevPersons) => [...prevPersons, response.data]);
+          setNewName("");
+          setNewNumber("");
+        });
     } else {
       alert(`${newName} is already added to phonebook.`);
     }
   }
+
+  // Currently, the numbers that are added to the phonebook are not saved to a backend server. Fix this situation.
 
   return (
     <div>
