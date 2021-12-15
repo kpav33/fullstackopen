@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import personService from "./services/persons";
 import "./App.css";
-import SuccessNotification from "./components/SuccessNotification";
-import ErrorNotification from "./components/ErrorNotification";
+// import SuccessNotification from "./components/SuccessNotification";
+// import ErrorNotification from "./components/ErrorNotification";
+import Notification from "./components/Notification";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
@@ -13,8 +14,9 @@ function App() {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
-  const [successNotification, setSuccessNotification] = useState(null);
-  const [errorNotification, setErrorNotification] = useState(null);
+  // const [successNotification, setSuccessNotification] = useState(null);
+  // const [errorNotification, setErrorNotification] = useState(null);
+  const [notification, setNotification] = useState(null);
 
   // Get data from JSON server and store it into state
   useEffect(() => {
@@ -27,12 +29,16 @@ function App() {
       })
       .catch((error) => {
         // Show error message on error
-        setErrorNotification(
-          `There was an error when trying to fetch data from the server. Try again later.`
+        // setErrorNotification(
+        //   `There was an error when trying to fetch data from the server. Try again later.`
+        // );
+        // setTimeout(() => {
+        //   setErrorNotification(null);
+        // }, 3000);
+        addNotification(
+          "There was an error when trying to fetch data from the server. Try again later.",
+          "error"
         );
-        setTimeout(() => {
-          setErrorNotification(null);
-        }, 3000);
       });
   }, []);
   // console.log("render", persons.length, "persons");
@@ -49,6 +55,15 @@ function App() {
     setFilter(event.target.value);
   }
 
+  // This function was added later after submitting my original solution (check commits and commented out code for original)
+  // Show the notification
+  function addNotification(message, type = "success") {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  }
+
   // Handle deleting a person
   function handleDeletePerson(id, name) {
     if (window.confirm(`Delete ${name}?`)) {
@@ -61,12 +76,16 @@ function App() {
         })
         .catch((error) => {
           // Show error message on error
-          setErrorNotification(
-            `There was an error when trying to delete ${name} from the server. Try again later.`
+          // setErrorNotification(
+          //   `There was an error when trying to delete ${name} from the server. Try again later.`
+          // );
+          // setTimeout(() => {
+          //   setErrorNotification(null);
+          // }, 3000);
+          addNotification(
+            `There was an error when trying to delete ${name} from the server. Try again later.`,
+            "error"
           );
-          setTimeout(() => {
-            setErrorNotification(null);
-          }, 3000);
         });
     }
   }
@@ -97,10 +116,11 @@ function App() {
         .create(newPerson)
         .then((newNote) => {
           // Show notification on added person
-          setSuccessNotification(`Added ${newNote.name}`);
-          setTimeout(() => {
-            setSuccessNotification(null);
-          }, 3000);
+          // setSuccessNotification(`Added ${newNote.name}`);
+          // setTimeout(() => {
+          //   setSuccessNotification(null);
+          // }, 3000);
+          addNotification(`Added ${newNote.name}`);
           // Display updated persons and reset state
           setNewName("");
           setNewNumber("");
@@ -108,12 +128,16 @@ function App() {
         })
         .catch((error) => {
           // Show error message on error
-          setErrorNotification(
-            `There was an error when adding ${newPerson.name} to the server. Try again later.`
+          // setErrorNotification(
+          //   `There was an error when adding ${newPerson.name} to the server. Try again later.`
+          // );
+          // setTimeout(() => {
+          //   setErrorNotification(null);
+          // }, 3000);
+          addNotification(
+            `There was an error when adding ${newPerson.name} to the server. Try again later.`,
+            "error"
           );
-          setTimeout(() => {
-            setErrorNotification(null);
-          }, 3000);
         });
     } else {
       if (
@@ -130,10 +154,11 @@ function App() {
           .update(findPerson.id, changedPerson)
           .then((updatedPerson) => {
             // Show notification on number change
-            setSuccessNotification(`Changed number for ${updatedPerson.name}`);
-            setTimeout(() => {
-              setSuccessNotification(null);
-            }, 3000);
+            // setSuccessNotification(`Changed number for ${updatedPerson.name}`);
+            // setTimeout(() => {
+            //   setSuccessNotification(null);
+            // }, 3000);
+            addNotification(`Changed number for ${updatedPerson.name}`);
             // Display updated persons
             setPersons((prevPersons) =>
               prevPersons.map((person) =>
@@ -143,12 +168,19 @@ function App() {
           })
           .catch((error) => {
             // Show error message on error
-            setErrorNotification(
-              `Information of ${changedPerson.name} has already been removed from server.`
+            // setErrorNotification(
+            //   `Information of ${changedPerson.name} has already been removed from server.`
+            // );
+            // setTimeout(() => {
+            //   setErrorNotification(null);
+            // }, 3000);
+            addNotification(
+              `Information of ${changedPerson.name} has already been removed from server.`,
+              "error"
             );
-            setTimeout(() => {
-              setErrorNotification(null);
-            }, 3000);
+            setPersons((prevPersons) =>
+              prevPersons.filter((person) => person.id !== findPerson.id)
+            );
           });
       } else {
         alert(`${newName} is already added to phonebook.`);
@@ -159,8 +191,9 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
-      <SuccessNotification message={successNotification} />
-      <ErrorNotification message={errorNotification} />
+      {/* <SuccessNotification message={successNotification} />
+      <ErrorNotification message={errorNotification} /> */}
+      <Notification notification={notification} />
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
 
       <h2>Add a new</h2>
