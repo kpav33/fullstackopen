@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import personService from "./services/persons";
 import "./App.css";
+import SuccessNotification from "./components/SuccessNotification";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import "./App.css";
 
 function App() {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [successNotification, setSuccessNotification] = useState(null);
 
   // Get data from JSON server and store it into state
   useEffect(() => {
@@ -67,9 +70,15 @@ function App() {
     if (preventDuplicates) {
       // Add new person to the server
       personService.create(newPerson).then((newNote) => {
-        setPersons((prevPersons) => [...prevPersons, newNote]);
+        // Show notification on added person
+        setSuccessNotification(`Added ${newNote.name}`);
+        setTimeout(() => {
+          setSuccessNotification(null);
+        }, 3000);
+        // Display updated persons and reset state
         setNewName("");
         setNewNumber("");
+        setPersons((prevPersons) => [...prevPersons, newNote]);
       });
     } else {
       if (
@@ -83,13 +92,19 @@ function App() {
         const changedPerson = { ...findPerson, number: newNumber };
         personService
           .update(findPerson.id, changedPerson)
-          .then((updatedPerson) =>
+          .then((updatedPerson) => {
+            // Show notification on number change
+            setSuccessNotification(`Changed number for ${updatedPerson.name}`);
+            setTimeout(() => {
+              setSuccessNotification(null);
+            }, 3000);
+            // Display updated values
             setPersons((prevPersons) =>
               prevPersons.map((person) =>
                 person.id !== findPerson.id ? person : updatedPerson
               )
-            )
-          );
+            );
+          });
       } else {
         alert(`${newName} is already added to phonebook.`);
       }
@@ -99,6 +114,7 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
+      <SuccessNotification message={successNotification} />
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
 
       <h2>Add a new</h2>
