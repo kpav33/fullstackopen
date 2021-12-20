@@ -2,7 +2,9 @@ import axios from "axios";
 // When using JSON server
 // const baseUrl = "http://localhost:3001/persons";
 // When using express server
-const baseUrl = "http://localhost:3001/api/persons";
+// const baseUrl = "http://localhost:3001/api/persons";
+// With frontend and backend at the same address, we can declare base URL as a relative URL
+const baseUrl = "/api/persons";
 
 function getAll() {
   const request = axios.get(baseUrl);
