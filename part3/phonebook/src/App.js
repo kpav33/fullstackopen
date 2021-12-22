@@ -134,10 +134,12 @@ function App() {
           // setTimeout(() => {
           //   setErrorNotification(null);
           // }, 3000);
-          addNotification(
-            `There was an error when adding ${newPerson.name} to the server. Try again later.`,
-            "error"
-          );
+          // addNotification(
+          //   `There was an error when adding ${newPerson.name} to the server. Try again later.`,
+          //   "error"
+          // );
+          // console.log(error.response.data);
+          addNotification(`${error.response.data.error}`, "error");
         });
     } else {
       if (
@@ -174,13 +176,18 @@ function App() {
             // setTimeout(() => {
             //   setErrorNotification(null);
             // }, 3000);
-            addNotification(
-              `Information of ${changedPerson.name} has already been removed from server.`,
-              "error"
-            );
-            setPersons((prevPersons) =>
-              prevPersons.filter((person) => person.id !== findPerson.id)
-            );
+            if (error.response.status === 400) {
+              console.log(error.response.data);
+              addNotification(`${error.response.data.error}`, "error");
+            } else {
+              addNotification(
+                `Information of ${changedPerson.name} has already been removed from server.`,
+                "error"
+              );
+              setPersons((prevPersons) =>
+                prevPersons.filter((person) => person.id !== findPerson.id)
+              );
+            }
           });
       } else {
         alert(`${newName} is already added to phonebook.`);
