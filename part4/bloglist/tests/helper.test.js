@@ -89,7 +89,7 @@ describe("Favorite blog", () => {
     expect(result).toEqual({});
   });
 
-  test("of single item returns correct value", () => {
+  test("of single item array returns correct value", () => {
     const result = listHelper.favoriteBlog(listWithOneBlog);
 
     expect(result).toEqual({
@@ -117,7 +117,7 @@ describe("Author with most blogs", () => {
     expect(result).toEqual({});
   });
 
-  test("of single item returns correct value", () => {
+  test("of single item array returns correct value", () => {
     const result = listHelper.mostBlogs(listWithOneBlog);
 
     expect(result).toEqual({ author: "Edsger W. Dijkstra", blogs: 1 });
@@ -129,6 +129,29 @@ describe("Author with most blogs", () => {
     expect(result).toEqual({
       author: "Robert C. Martin",
       blogs: 3,
+    });
+  });
+});
+
+describe("Author that has most likes", () => {
+  test("of empty list is {}", () => {
+    const result = listHelper.mostLikes([]);
+
+    expect(result).toEqual({});
+  });
+
+  test("of single item array returns correct value", () => {
+    const result = listHelper.mostLikes(listWithOneBlog);
+
+    expect(result).toEqual({ author: "Edsger W. Dijkstra", likes: 5 });
+  });
+
+  test("of a bigger blog list returns correct value", () => {
+    const result = listHelper.mostLikes(blogs);
+
+    expect(result).toEqual({
+      author: "Edsger W. Dijkstra",
+      likes: 17,
     });
   });
 });
