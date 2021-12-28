@@ -1,3 +1,4 @@
+const { response } = require("express");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
@@ -27,7 +28,7 @@ beforeEach(async () => {
   await blogObject.save();
 });
 
-describe("Test blog opeartions", () => {
+describe("Test blog operations", () => {
   test("blogs are returned as json", async () => {
     await api
       .get("/api/blogs")
@@ -52,8 +53,30 @@ describe("Test blog opeartions", () => {
     });
     // expect(response.body[0].id).toBeDefined();
   });
+
+  test("making HTTP POST request to the /api/blogs url successfully creates a new blog post", async () => {
+    const newBlog = {
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+      likes: 12,
+    };
+
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const response = await api.get("/api/blogs");
+
+    const contents = response.body.map((item) => item.title);
+
+    expect(response.body).toHaveLength(initialBlogs.length + 1);
+    expect(contents).toContain("Canonical string reduction");
+  });
 });
 
 afterAll(() => {
-  mongoose.connection.close();
+  mongoose.connection.close("Canonical string reduction");
 });
