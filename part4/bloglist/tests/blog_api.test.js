@@ -7,16 +7,16 @@ const api = supertest(app);
 const Blog = require("../models/blog");
 const initialBlogs = [
   {
-    title: "My book",
-    author: "John Smith",
-    url: "www.example.com",
-    likes: 5,
+    title: "React patterns",
+    author: "Michael Chan",
+    url: "https://reactpatterns.com/",
+    likes: 7,
   },
   {
-    title: "Another book",
-    author: "John Row",
-    url: "www.example5.com",
-    likes: 3,
+    title: "Go To Statement Considered Harmful",
+    author: "Edsger W. Dijkstra",
+    url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+    likes: 5,
   },
 ];
 beforeEach(async () => {
@@ -42,6 +42,15 @@ describe("Test blog opeartions", () => {
       .expect("Content-Type", /application\/json/);
 
     expect(response.body).toHaveLength(2);
+  });
+
+  test("the unique identifier property of the blog posts is named id", async () => {
+    const response = await api.get("/api/blogs");
+
+    response.body.forEach((item) => {
+      expect(item.id).toBeDefined();
+    });
+    // expect(response.body[0].id).toBeDefined();
   });
 });
 
