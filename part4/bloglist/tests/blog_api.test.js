@@ -75,6 +75,24 @@ describe("Test blog operations", () => {
     expect(response.body).toHaveLength(initialBlogs.length + 1);
     expect(contents).toContain("Canonical string reduction");
   });
+
+  test("verify  if the likes property is missing from the request, it  defaults to the value 0", async () => {
+    const newBlog = {
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    };
+
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const response = await api.get("/api/blogs");
+
+    expect(response.body[response.body.length - 1].likes).toBe(0);
+  });
 });
 
 afterAll(() => {
