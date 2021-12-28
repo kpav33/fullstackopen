@@ -25,6 +25,9 @@ blogsRouter.post("/", async (request, response) => {
   //   .save()
   //   .then((result) => response.status(201).json(result))
   //   .catch((error) => next(error));
+
+  // Could use https://github.com/davidbanham/express-async-errors to remove try/catch blocks
+
   try {
     const savedBlog = await blog.save();
     response.status(201).json(savedBlog);

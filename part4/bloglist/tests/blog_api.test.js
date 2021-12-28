@@ -1,31 +1,38 @@
-const { response } = require("express");
 const mongoose = require("mongoose");
+const helper = require("./test_helper");
 const supertest = require("supertest");
 const app = require("../app");
-
 const api = supertest(app);
 
 const Blog = require("../models/blog");
-const initialBlogs = [
-  {
-    title: "React patterns",
-    author: "Michael Chan",
-    url: "https://reactpatterns.com/",
-    likes: 7,
-  },
-  {
-    title: "Go To Statement Considered Harmful",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
-    likes: 5,
-  },
-];
+
+// beforeEach(async () => {
+//   await Blog.deleteMany({});
+
+//   let blogObject = new Blog(helper.initialBlogs[0]);
+//   await blogObject.save();
+
+//   blogObject = new Blog(helper.initialBlogs[1]);
+//   await blogObject.save();
+// });
+
+// More advanced beforeEach function with using Promise.all()
+// beforeEach(async () => {
+//   await Blog.deleteMany({});
+
+//   const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog));
+//   const promiseArray = blogObjects.map((blog) => blog.save());
+//   await Promise.all(promiseArray);
+// });
+
+// More advanced beforeEach function that unlike Promise.all() function which executes promises in parallel, ensures that the promises are executed in a specific execution order
 beforeEach(async () => {
   await Blog.deleteMany({});
-  let blogObject = new Blog(initialBlogs[0]);
-  await blogObject.save();
-  blogObject = new Blog(initialBlogs[1]);
-  await blogObject.save();
+
+  for (let blog of helper.initialBlogs) {
+    let blogObject = new Blog(blog);
+    await blogObject.save();
+  }
 });
 
 describe("Test blog operations", () => {
@@ -68,11 +75,13 @@ describe("Test blog operations", () => {
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
-    const response = await api.get("/api/blogs");
+    // const response = await api.get("/api/blogs");
+    const blogsAtEnd = await helper.blogsInDb();
 
-    const contents = response.body.map((item) => item.title);
+    // const contents = response.body.map((item) => item.title);
+    const contents = blogsAtEnd.map((item) => item.title);
 
-    expect(response.body).toHaveLength(initialBlogs.length + 1);
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
     expect(contents).toContain("Canonical string reduction");
   });
 
@@ -89,9 +98,11 @@ describe("Test blog operations", () => {
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
-    const response = await api.get("/api/blogs");
+    // const response = await api.get("/api/blogs");
+    const blogsAtEnd = await helper.blogsInDb();
 
-    expect(response.body[response.body.length - 1].likes).toBe(0);
+    // expect(response.body[response.body.length - 1].likes).toBe(0);
+    expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBe(0);
   });
 
   test("check if the title and url properties are missing from the request data", async () => {
@@ -117,12 +128,14 @@ describe("Test blog operations", () => {
       .expect(400)
       .expect("Content-Type", /application\/json/);
 
-    const response = await api.get("/api/blogs");
+    // const response = await api.get("/api/blogs");
+    const blogsAtEnd = await helper.blogsInDb();
 
-    expect(response.body).toHaveLength(initialBlogs.length);
+    // expect(response.body).toHaveLength(helper.initialBlogs.length);
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
   });
 });
 
 afterAll(() => {
-  mongoose.connection.close("Canonical string reduction");
+  mongoose.connection.close();
 });
