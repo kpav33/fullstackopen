@@ -93,6 +93,34 @@ describe("Test blog operations", () => {
 
     expect(response.body[response.body.length - 1].likes).toBe(0);
   });
+
+  test("check if the title and url properties are missing from the request data", async () => {
+    const missingTitleBlog = {
+      author: "Edsger W. Dijkstra",
+      url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    };
+
+    const missingUrlBlog = {
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+    };
+
+    await api
+      .post("/api/blogs")
+      .send(missingTitleBlog)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    await api
+      .post("/api/blogs")
+      .send(missingUrlBlog)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    const response = await api.get("/api/blogs");
+
+    expect(response.body).toHaveLength(initialBlogs.length);
+  });
 });
 
 afterAll(() => {
