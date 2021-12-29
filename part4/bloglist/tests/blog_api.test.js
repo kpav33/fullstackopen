@@ -161,9 +161,11 @@ describe("viewing a specific blog", () => {
       .expect(200)
       .expect("Content-Type", /application\/json/);
 
-    const processedBlogToView = JSON.parse(JSON.stringify(blogToView));
+    // JSON serialization and parsing would be necessary if on of the object keys would be a Date object
+    // In that case we would need to first perform a similar JSON serialization and parsing of the blogToView object as the server is performing automatically for the resultBlog.body object
+    // const processedBlogToView = JSON.parse(JSON.stringify(blogToView));
 
-    expect(resultBlog.body).toEqual(processedBlogToView);
+    expect(resultBlog.body).toEqual(blogToView);
   });
 
   test("fails with status code 404 if blog doesn't exist", async () => {
