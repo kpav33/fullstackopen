@@ -6,6 +6,12 @@ const api = supertest(app);
 
 const Blog = require("../models/blog");
 
+// Make sure the database is the same every time the tests are ran
+beforeEach(async () => {
+  await Blog.deleteMany({});
+  await Blog.insertMany(helper.initialBlogs);
+});
+
 // beforeEach(async () => {
 //   await Blog.deleteMany({});
 
@@ -26,16 +32,16 @@ const Blog = require("../models/blog");
 // });
 
 // More advanced beforeEach function that unlike Promise.all() function which executes promises in parallel, ensures that the promises are executed in a specific execution order
-beforeEach(async () => {
-  await Blog.deleteMany({});
+// beforeEach(async () => {
+//   await Blog.deleteMany({});
 
-  for (let blog of helper.initialBlogs) {
-    let blogObject = new Blog(blog);
-    await blogObject.save();
-  }
-});
+//   for (let blog of helper.initialBlogs) {
+//     let blogObject = new Blog(blog);
+//     await blogObject.save();
+//   }
+// });
 
-describe("Test blog operations", () => {
+describe("test blog operations", () => {
   test("blogs are returned as json", async () => {
     await api
       .get("/api/blogs")
@@ -132,6 +138,58 @@ describe("Test blog operations", () => {
     const blogsAtEnd = await helper.blogsInDb();
 
     // expect(response.body).toHaveLength(helper.initialBlogs.length);
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
+  });
+});
+
+describe("viewing a specific blog", () => {
+  test("succeeds with a valid id", async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const blogToView = blogsAtStart[0];
+
+    const resultBlog = await api
+      .get(`/api/blogs/${blogToView.id}`)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    const processedBlogToView = JSON.parse(JSON.stringify(blogToView));
+
+    expect(resultBlog.body).toEqual(processedBlogToView);
+  });
+
+  test("fails with status code 404 if blog doesn't exist", async () => {
+    const validNonExistingId = await helper.nonExistingId();
+
+    await api.get(`/api/blogs/${validNonExistingId}`).expect(404);
+  });
+
+  test("fails with status code 400 if blog id is invalid", async () => {
+    const invalidId = "421fasfa142";
+
+    await api.get(`/api/blogs/${invalidId}`).expect(400);
+  });
+});
+
+describe("deletion of a note", () => {
+  test("succeeds with status code 204 if id is valid", async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const blogToDelete = blogsAtStart[0];
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1);
+
+    const contents = blogsAtEnd.map((item) => item.title);
+    expect(contents).not.toContain(blogToDelete.title);
+  });
+
+  test("fails with status code 400 if blog id is invalid", async () => {
+    const invalidId = "421fasfa142";
+
+    await api.delete(`/api/blogs/${invalidId}`).expect(400);
+
+    const blogsAtEnd = await helper.blogsInDb();
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
   });
 });
