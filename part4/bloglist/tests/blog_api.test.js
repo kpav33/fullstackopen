@@ -41,7 +41,7 @@ beforeEach(async () => {
 //   }
 // });
 
-describe("test blog operations", () => {
+describe("when there are intially some blogs saved", () => {
   test("blogs are returned as json", async () => {
     await api
       .get("/api/blogs")
@@ -55,7 +55,7 @@ describe("test blog operations", () => {
       .expect(200)
       .expect("Content-Type", /application\/json/);
 
-    expect(response.body).toHaveLength(2);
+    expect(response.body).toHaveLength(helper.initialBlogs.length);
   });
 
   test("the unique identifier property of the blog posts is named id", async () => {
@@ -67,6 +67,15 @@ describe("test blog operations", () => {
     // expect(response.body[0].id).toBeDefined();
   });
 
+  test("a specific blog is among the returned blogs", async () => {
+    const response = await api.get("/api/blogs");
+
+    const contents = response.body.map((item) => item.title);
+    expect(contents).toContain("React patterns");
+  });
+});
+
+describe("addition of a blog", () => {
   test("making HTTP POST request to the /api/blogs url successfully creates a new blog post", async () => {
     const newBlog = {
       title: "Canonical string reduction",
@@ -91,7 +100,7 @@ describe("test blog operations", () => {
     expect(contents).toContain("Canonical string reduction");
   });
 
-  test("verify  if the likes property is missing from the request, it  defaults to the value 0", async () => {
+  test("verify  if the likes property is missing from the request, it defaults to the value 0", async () => {
     const newBlog = {
       title: "Canonical string reduction",
       author: "Edsger W. Dijkstra",
@@ -170,7 +179,7 @@ describe("viewing a specific blog", () => {
   });
 });
 
-describe("deletion of a note", () => {
+describe("deletion of a blog", () => {
   test("succeeds with status code 204 if id is valid", async () => {
     const blogsAtStart = await helper.blogsInDb();
     const blogToDelete = blogsAtStart[0];
@@ -194,7 +203,7 @@ describe("deletion of a note", () => {
   });
 });
 
-describe("updating of a note", () => {
+describe("updating of a blog", () => {
   test("succeeds with a valid id", async () => {
     const blogsAtStart = await helper.blogsInDb();
     const blogToUpdate = blogsAtStart[0];
