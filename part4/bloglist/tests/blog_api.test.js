@@ -194,6 +194,39 @@ describe("deletion of a note", () => {
   });
 });
 
+describe("updating of a note", () => {
+  test("succeeds with a valid id", async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const blogToUpdate = blogsAtStart[0];
+
+    const newBlog = {
+      title: "React patterns",
+      author: "Michael Chan",
+      url: "https://reactpatterns.com/",
+      likes: 10,
+    };
+
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(newBlog)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length);
+    expect(blogsAtEnd[0].likes).toBe(10);
+  });
+
+  test("fails with status code 400 if blog id is invalid", async () => {
+    const invalidId = "421fasfa142";
+
+    await api.put(`/api/blogs/${invalidId}`).expect(400);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
+  });
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });

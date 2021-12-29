@@ -58,6 +58,26 @@ blogsRouter.delete("/:id", async (request, response, next) => {
   }
 });
 
+blogsRouter.put("/:id", async (request, response, next) => {
+  try {
+    const body = request.body;
+
+    const blog = {
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes,
+    };
+
+    const newBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
+      new: true,
+    });
+    response.json(newBlog);
+  } catch (exception) {
+    next(exception);
+  }
+});
+
 // // Test if server works
 // blogsRouter.get("/test", (request, response) => {
 //   response.send("<h1>Hello World!</h1>");
