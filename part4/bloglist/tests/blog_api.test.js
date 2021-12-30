@@ -78,12 +78,26 @@ describe("when there are intially some blogs saved", () => {
 });
 
 describe("addition of a blog", () => {
+  beforeEach(async () => {
+    const newUser = {
+      username: "root",
+      name: "root",
+      password: "password",
+    };
+
+    await api.post("/api/users").send(newUser);
+  });
+
   test("making HTTP POST request to the /api/blogs url successfully creates a new blog post", async () => {
+    const usersAtStart = await helper.usersInDb();
+    const userId = usersAtStart[0].id;
+
     const newBlog = {
       title: "Canonical string reduction",
       author: "Edsger W. Dijkstra",
       url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
       likes: 12,
+      userId,
     };
 
     await api
@@ -103,10 +117,14 @@ describe("addition of a blog", () => {
   });
 
   test("verify  if the likes property is missing from the request, it defaults to the value 0", async () => {
+    const usersAtStart = await helper.usersInDb();
+    const userId = usersAtStart[0].id;
+
     const newBlog = {
       title: "Canonical string reduction",
       author: "Edsger W. Dijkstra",
       url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+      userId,
     };
 
     await api
