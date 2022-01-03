@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
+const userExtractor = require("../utils/middleware").userExtractor;
 
 // Extracted to middleware
 // const getTokenFrom = (request) => {
@@ -31,7 +32,7 @@ blogsRouter.get("/:id", async (request, response, next) => {
   }
 });
 
-blogsRouter.post("/", async (request, response, next) => {
+blogsRouter.post("/", userExtractor, async (request, response, next) => {
   const body = request.body;
   try {
     // Check for valid token
@@ -41,14 +42,13 @@ blogsRouter.post("/", async (request, response, next) => {
       return response.status(401).json({ error: "token missing or invalid" });
     }
 
-    const user = await User.findById(decodedToken.id);
+    // Replaced with userExtractor middleware
+    // const user = await User.findById(decodedToken.id);
+    const user = request.user;
 
     if (body.title === undefined || body.url === undefined) {
       return response.status(400).json({ error: "bad request" });
     }
-
-    // const user = await User.findById(body.userId);
-    // console.log(user);
 
     const blog = new Blog({
       title: body.title,
@@ -74,17 +74,18 @@ blogsRouter.post("/", async (request, response, next) => {
   }
 });
 
-blogsRouter.delete("/:id", async (request, response, next) => {
+blogsRouter.delete("/:id", userExtractor, async (request, response, next) => {
   try {
     // Check for valid token
     const decodedToken = jwt.verify(request.token, process.env.SECRET);
     if (!request.token || !decodedToken.id) {
       return response.status(401).json({ error: "token missing or invalid" });
     }
+    const userId = request.user.id || "";
 
     // Only allow user to delete a blog if they created it
     const blog = await Blog.findById(request.params.id);
-    if (blog.user.toString() !== decodedToken.id) {
+    if (blog.user.toString() !== userId.toString()) {
       return response.status(401).json({ error: "wrong user" });
     }
 
