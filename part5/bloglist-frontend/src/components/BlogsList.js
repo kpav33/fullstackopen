@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import blogService from "../services/blogs";
 import Blog from "./Blog";
 
-export const BlogsList = ({ user, setUser, blogs, setBlogs }) => {
+export const BlogsList = ({
+  user,
+  setUser,
+  blogs,
+  setBlogs,
+  addNotification,
+}) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
@@ -10,6 +16,7 @@ export const BlogsList = ({ user, setUser, blogs, setBlogs }) => {
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
+    addNotification("successfully logged out of the application");
   };
 
   const handleCreateBlog = async (event) => {
@@ -21,11 +28,22 @@ export const BlogsList = ({ user, setUser, blogs, setBlogs }) => {
       url: url,
     };
 
-    const returnedBlog = await blogService.create(newBlog);
-    setBlogs((prevBlogs) => [...prevBlogs, returnedBlog]);
-    setTitle("");
-    setAuthor("");
-    setUrl("");
+    try {
+      const returnedBlog = await blogService.create(newBlog);
+      setBlogs((prevBlogs) => [...prevBlogs, returnedBlog]);
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+      addNotification(
+        `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
+      );
+    } catch (exception) {
+      addNotification(
+        "failed to add a blog, make sure you filled out all of the fields",
+        "error"
+      );
+      console.log(exception);
+    }
   };
 
   return (

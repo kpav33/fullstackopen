@@ -3,14 +3,18 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { LoginForm } from "./components/LoginForm";
 import { BlogsList } from "./components/BlogsList";
+import { Notification } from "./components/Notification";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
+  const [notification, setNotification] = useState(null);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   const [user, setUser] = useState(null);
 
-  console.log(user);
+  // console.log(user);
 
   // Get all blogs from database
   useEffect(() => {
@@ -33,6 +37,13 @@ const App = () => {
     }
   }, []);
 
+  function addNotification(message, type = "success") {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  }
+
   // Handle logging into the application
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -48,7 +59,7 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      console.log("Implement error message here...");
+      addNotification("wrong username or password", "error");
       console.log(exception);
     }
   };
@@ -69,8 +80,11 @@ const App = () => {
           setUser={setUser}
           blogs={blogs}
           setBlogs={setBlogs}
+          addNotification={addNotification}
         />
       )}
+      <br />
+      <Notification notification={notification} />
     </div>
   );
 };
