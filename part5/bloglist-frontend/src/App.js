@@ -14,7 +14,12 @@ const App = () => {
 
   // Get all blogs from database
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    // blogService.getAll().then((blogs) => setBlogs(blogs));
+    const fetchData = async () => {
+      const data = await blogService.getAll();
+      setBlogs(data);
+    };
+    fetchData();
   }, []);
 
   // Check if credentials for logged in user are already stored in local storage
@@ -37,6 +42,8 @@ const App = () => {
       const user = await loginService.login({ username, password });
 
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+
+      blogService.setToken(user.token);
       setUser(user);
       setUsername("");
       setPassword("");
@@ -57,7 +64,12 @@ const App = () => {
           setPassword={setPassword}
         />
       ) : (
-        <BlogsList user={user} setUser={setUser} blogs={blogs} />
+        <BlogsList
+          user={user}
+          setUser={setUser}
+          blogs={blogs}
+          setBlogs={setBlogs}
+        />
       )}
     </div>
   );
