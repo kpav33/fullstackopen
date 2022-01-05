@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import blogService from "../services/blogs";
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, setBlogs }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [blogObject, setBlogObject] = useState(blog);
 
@@ -17,7 +17,17 @@ const Blog = ({ blog }) => {
     };
 
     setBlogObject(updatedBlog);
+    // Do a live update of the blog order as the like number is changed
+    setBlogs((prevState) => {
+      const filter = prevState.filter((blog) => blog.id !== updatedBlog.id);
+      setBlogs([...filter, updatedBlog]);
+    });
+
     const response = await blogService.update(blog.id, updatedBlog);
+
+    // const data = await blogService.getAll();
+    // setBlogs(data);
+    // console.log(data);
     // console.log(response);
   };
 
