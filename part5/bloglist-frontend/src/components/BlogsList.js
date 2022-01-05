@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import Blog from "./Blog";
 import { BlogForm } from "./BlogForm";
 import { Togglable } from "./Togglable";
@@ -11,34 +11,21 @@ export const BlogsList = ({
   setBlogs,
   addNotification,
 }) => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
-
   const blogFormRef = useRef();
 
+  // Log out and clear local storage
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
     addNotification("successfully logged out of the application");
   };
 
-  const handleCreateBlog = async (event) => {
-    event.preventDefault();
-
-    const newBlog = {
-      title: title,
-      author: author,
-      url: url,
-    };
-
+  // Add a new blog
+  const addBlog = async (newBlog) => {
     try {
       blogFormRef.current.toggleVisibility();
       const returnedBlog = await blogService.create(newBlog);
       setBlogs((prevBlogs) => [...prevBlogs, returnedBlog]);
-      setTitle("");
-      setAuthor("");
-      setUrl("");
       addNotification(
         `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
       );
@@ -58,17 +45,7 @@ export const BlogsList = ({
         {user.name} logged in <button onClick={handleLogout}>Logout</button>
       </p>
       <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-        <BlogForm
-          setBlogs={setBlogs}
-          addNotification={addNotification}
-          handleCreateBlog={handleCreateBlog}
-          title={title}
-          setTitle={setTitle}
-          author={author}
-          setAuthor={setAuthor}
-          url={url}
-          setUrl={setUrl}
-        />
+        <BlogForm createBlog={addBlog} />
       </Togglable>
       <br />
       <div>
