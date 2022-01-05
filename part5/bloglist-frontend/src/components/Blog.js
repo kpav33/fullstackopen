@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import blogService from "../services/blogs";
 
-const Blog = ({ blog, setBlogs }) => {
+const Blog = ({ blog, setBlogs, user }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [blogObject, setBlogObject] = useState(blog);
 
@@ -10,7 +10,6 @@ const Blog = ({ blog, setBlogs }) => {
   };
 
   const handleLikeClick = async () => {
-    console.log("OK");
     const updatedBlog = {
       ...blogObject,
       likes: blogObject.likes + 1,
@@ -23,12 +22,25 @@ const Blog = ({ blog, setBlogs }) => {
       setBlogs([...filter, updatedBlog]);
     });
 
-    const response = await blogService.update(blog.id, updatedBlog);
+    await blogService.update(blog.id, updatedBlog);
 
     // const data = await blogService.getAll();
     // setBlogs(data);
     // console.log(data);
     // console.log(response);
+  };
+
+  const handleRemove = async () => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author} ?`)) {
+      try {
+        await blogService.remove(blog.id);
+        setBlogs((prevState) =>
+          prevState.filter((blog) => blog.id !== blogObject.id)
+        );
+      } catch (exception) {
+        console.log(exception);
+      }
+    }
   };
 
   const blogStyle = {
@@ -39,8 +51,6 @@ const Blog = ({ blog, setBlogs }) => {
     borderWidth: 1,
     marginBottom: 5,
   };
-
-  // console.log(blog);
 
   return (
     <div style={blogStyle}>
@@ -66,6 +76,9 @@ const Blog = ({ blog, setBlogs }) => {
             <strong>Author: </strong>
             {blog.author}
           </p>
+          {user.username === blog.user.username && (
+            <button onClick={handleRemove}>remove</button>
+          )}
         </div>
       )}
     </div>

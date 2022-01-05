@@ -26,7 +26,15 @@ const update = async (id, newObject) => {
   return response.data;
 };
 
+const remove = async (id) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+
+  await axios.delete(`${baseUrl}/${id}`, config);
+};
+
 // Assigned to object and then exported as default export to get rid of React warning: Assign object to a variable before exporting as module default  import/no-anonymous-default-export
-const blogService = { getAll, create, update, setToken };
+const blogService = { getAll, create, update, remove, setToken };
 
 export default blogService;
