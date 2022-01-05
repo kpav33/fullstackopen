@@ -68,11 +68,11 @@ const App = () => {
     <div>
       {user === null ? (
         <LoginForm
-          handleLogin={handleLogin}
+          handleSubmit={handleLogin}
           username={username}
-          setUsername={setUsername}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
           password={password}
-          setPassword={setPassword}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
         />
       ) : (
         <BlogsList

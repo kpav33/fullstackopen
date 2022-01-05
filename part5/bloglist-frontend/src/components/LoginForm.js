@@ -1,23 +1,23 @@
 import React from "react";
 
 export const LoginForm = ({
-  handleLogin,
+  handleSubmit,
   username,
-  setUsername,
+  handleUsernameChange,
   password,
-  setPassword,
+  handlePasswordChange,
 }) => {
   return (
     <>
       <h2>log in to application</h2>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleSubmit}>
         <div>
           username
           <input
             type="text"
             value={username}
             name="Username"
-            onChange={({ target }) => setUsername(target.value)}
+            onChange={handleUsernameChange}
           />
         </div>
         <div>
@@ -26,7 +26,7 @@ export const LoginForm = ({
             type="text"
             value={password}
             name="Password"
-            onChange={({ target }) => setPassword(target.value)}
+            onChange={handlePasswordChange}
           />
         </div>
         <button type="submit">Login</button>

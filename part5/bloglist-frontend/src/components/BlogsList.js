@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import blogService from "../services/blogs";
+import React, { useState, useRef } from "react";
 import Blog from "./Blog";
+import { BlogForm } from "./BlogForm";
+import { Togglable } from "./Togglable";
+import blogService from "../services/blogs";
 
 export const BlogsList = ({
   user,
@@ -12,6 +14,8 @@ export const BlogsList = ({
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
+
+  const blogFormRef = useRef();
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
@@ -29,6 +33,7 @@ export const BlogsList = ({
     };
 
     try {
+      blogFormRef.current.toggleVisibility();
       const returnedBlog = await blogService.create(newBlog);
       setBlogs((prevBlogs) => [...prevBlogs, returnedBlog]);
       setTitle("");
@@ -52,39 +57,19 @@ export const BlogsList = ({
       <p>
         {user.name} logged in <button onClick={handleLogout}>Logout</button>
       </p>
-      <div>
-        <h2>create new blogs</h2>
-        <form onSubmit={handleCreateBlog}>
-          <div>
-            title:
-            <input
-              type="text"
-              value={title}
-              name="title"
-              onChange={({ target }) => setTitle(target.value)}
-            />
-          </div>
-          <div>
-            author:
-            <input
-              type="text"
-              value={author}
-              name="author"
-              onChange={({ target }) => setAuthor(target.value)}
-            />
-          </div>
-          <div>
-            url:
-            <input
-              type="text"
-              value={url}
-              name="url"
-              onChange={({ target }) => setUrl(target.value)}
-            />
-          </div>
-          <button type="submit">Create</button>
-        </form>
-      </div>
+      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+        <BlogForm
+          setBlogs={setBlogs}
+          addNotification={addNotification}
+          handleCreateBlog={handleCreateBlog}
+          title={title}
+          setTitle={setTitle}
+          author={author}
+          setAuthor={setAuthor}
+          url={url}
+          setUrl={setUrl}
+        />
+      </Togglable>
       <br />
       <div>
         {blogs.map((blog) => (
