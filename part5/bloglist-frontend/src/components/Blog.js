@@ -76,7 +76,11 @@ const Blog = ({ blog, setBlogs, user }) => {
             <strong>Author: </strong>
             {blog.author}
           </p>
-          {user.username === blog.user.username && (
+          {/* Check typeof blog.user === "string" to make sure the remove button appears for items immediately after creating them, without this you would need to do a manual page refresh, before the remove button would become accessible on the newly added blog, even if it was created by the currently logged in user */}
+          {/* When item is first added the blog.user key returns the id of the user not the user object, object is added when data is fetched from the database by using the populate option */}
+          {/* This is why this little hack here is used, because the only time blog.user would be of type "string" is when there is a new blog created */}
+          {(user.username === blog.user.username ||
+            typeof blog.user === "string") && (
             <button onClick={handleRemove}>remove</button>
           )}
         </div>
