@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { LoginForm } from "./components/LoginForm";
-// import { BlogsList } from "./components/BlogsList";
 import { Notification } from "./components/Notification";
 import Blog from "./components/Blog";
 import { BlogForm } from "./components/BlogForm";

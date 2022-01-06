@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 export const Notification = ({ notification }) => {
   const notificationDiv =
@@ -7,4 +8,8 @@ export const Notification = ({ notification }) => {
     );
 
   return <>{notificationDiv}</>;
+};
+
+Notification.propTypes = {
+  notification: PropTypes.object,
 };
