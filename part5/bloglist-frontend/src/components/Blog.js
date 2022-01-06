@@ -9,7 +9,7 @@ const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
     setShowDetails((prevState) => !prevState);
   };
 
-  const handleLikeClick = async () => {
+  const handleLikeClick = () => {
     const updatedBlog = {
       ...blogObject,
       likes: blogObject.likes + 1,
@@ -20,7 +20,7 @@ const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
     updateBlog(updatedBlog);
   };
 
-  const handleRemove = async () => {
+  const handleRemove = () => {
     deleteBlog(blog);
   };
 
