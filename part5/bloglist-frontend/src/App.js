@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { LoginForm } from "./components/LoginForm";
-import { BlogsList } from "./components/BlogsList";
+// import { BlogsList } from "./components/BlogsList";
 import { Notification } from "./components/Notification";
+import Blog from "./components/Blog";
+import { BlogForm } from "./components/BlogForm";
+import { Togglable } from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -14,7 +17,7 @@ const App = () => {
 
   const [user, setUser] = useState(null);
 
-  // console.log(user);
+  const blogFormRef = useRef();
 
   // Get all blogs from database
   useEffect(() => {
@@ -37,6 +40,7 @@ const App = () => {
     }
   }, []);
 
+  // Display a notification
   function addNotification(message, type = "success") {
     setNotification({ message, type });
     setTimeout(() => {
@@ -64,6 +68,71 @@ const App = () => {
     }
   };
 
+  // Log out and clear local storage
+  const handleLogout = () => {
+    window.localStorage.removeItem("loggedBlogappUser");
+    setUser(null);
+    addNotification("successfully logged out of the application");
+  };
+
+  // Add a new blog
+  const addBlog = async (newBlog) => {
+    try {
+      blogFormRef.current.toggleVisibility();
+      const returnedBlog = await blogService.create(newBlog);
+      setBlogs((prevBlogs) => [...prevBlogs, returnedBlog]);
+      addNotification(
+        `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
+      );
+    } catch (exception) {
+      addNotification(
+        "failed to add a blog, make sure you filled out all of the fields",
+        "error"
+      );
+      console.log(exception);
+    }
+  };
+
+  // Update a blog
+  const updateBlog = async (updatedBlog) => {
+    try {
+      // Do a live update of the blog order as the like number is changed
+      setBlogs((prevState) => {
+        const filter = prevState.filter((blog) => blog.id !== updatedBlog.id);
+        return [...filter, updatedBlog];
+      });
+      await blogService.update(updatedBlog.id, updatedBlog);
+      // addNotification(
+      //   `blog ${updatedBlog.title} by ${updatedBlog.author} updated`
+      // );
+    } catch (exception) {
+      addNotification("failed to update the blog", "error");
+      console.log(exception);
+    }
+  };
+
+  // Delete a blog
+  const deleteBlog = async (deletedBlog) => {
+    if (
+      window.confirm(
+        `Remove blog ${deletedBlog.title} by ${deletedBlog.author} ?`
+      )
+    ) {
+      try {
+        await blogService.remove(deletedBlog.id);
+        setBlogs((prevState) =>
+          prevState.filter((blog) => blog.id !== deletedBlog.id)
+        );
+        addNotification(
+          `blog ${deletedBlog.title} by ${deletedBlog.author} has been deleted`
+        );
+      } catch (exception) {
+        addNotification("failed to delete the blog", "error");
+        console.log(exception);
+      }
+    }
+  };
+
   return (
     <div>
       {user === null ? (
@@ -75,13 +144,29 @@ const App = () => {
           handlePasswordChange={({ target }) => setPassword(target.value)}
         />
       ) : (
-        <BlogsList
-          user={user}
-          setUser={setUser}
-          blogs={blogs}
-          setBlogs={setBlogs}
-          addNotification={addNotification}
-        />
+        <div>
+          <h2>blogs</h2>
+          <p>
+            {user.name} logged in <button onClick={handleLogout}>Logout</button>
+          </p>
+          <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+            <BlogForm createBlog={addBlog} />
+          </Togglable>
+          <br />
+          <div>
+            {blogs
+              .sort((a, b) => b.likes - a.likes)
+              .map((blog) => (
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  user={user}
+                  updateBlog={updateBlog}
+                  deleteBlog={deleteBlog}
+                />
+              ))}
+          </div>
+        </div>
       )}
       <br />
       <Notification notification={notification} />

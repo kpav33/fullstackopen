@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import blogService from "../services/blogs";
 
-const Blog = ({ blog, setBlogs, user }) => {
+const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [blogObject, setBlogObject] = useState(blog);
 
@@ -14,33 +13,14 @@ const Blog = ({ blog, setBlogs, user }) => {
       ...blogObject,
       likes: blogObject.likes + 1,
     };
-
     setBlogObject(updatedBlog);
-    // Do a live update of the blog order as the like number is changed
-    setBlogs((prevState) => {
-      const filter = prevState.filter((blog) => blog.id !== updatedBlog.id);
-      setBlogs([...filter, updatedBlog]);
-    });
 
-    await blogService.update(blog.id, updatedBlog);
-
-    // const data = await blogService.getAll();
-    // setBlogs(data);
-    // console.log(data);
-    // console.log(response);
+    // Call the updated blog function with the passed updatedBlog object
+    updateBlog(updatedBlog);
   };
 
   const handleRemove = async () => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author} ?`)) {
-      try {
-        await blogService.remove(blog.id);
-        setBlogs((prevState) =>
-          prevState.filter((blog) => blog.id !== blogObject.id)
-        );
-      } catch (exception) {
-        console.log(exception);
-      }
-    }
+    deleteBlog(blog);
   };
 
   const blogStyle = {
