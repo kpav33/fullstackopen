@@ -3,7 +3,7 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, fireEvent } from "@testing-library/react";
 import Blog from "./Blog";
 
-describe("blog component tests", () => {
+describe("<Blog /> component tests", () => {
   const blog = {
     title: "Magnificent title",
     author: "John Smith",

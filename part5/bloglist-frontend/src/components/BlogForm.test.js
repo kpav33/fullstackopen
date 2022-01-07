@@ -3,7 +3,7 @@ import "@testing-library/jest-dom/extend-expect";
 import { render, fireEvent } from "@testing-library/react";
 import { BlogForm } from "./BlogForm";
 
-describe("blog form component tests", () => {
+describe("<BlogForm /> component tests", () => {
   const mockCreateBlog = jest.fn();
 
   test("<BlogForm /> updates parent state and calls onSubmit", () => {
