@@ -80,4 +80,60 @@ describe("blog component tests", () => {
     expect(component.container).not.toHaveTextContent("www.example.com");
     expect(component.container).not.toHaveTextContent("5");
   });
+
+  test("if the likes button is pressed twice, the event handler is called twice", () => {
+    const component = render(
+      <Blog
+        blog={blog}
+        user={mockUser}
+        updateBlog={mockUpdateBlog}
+        deleteBlog={mockDeleteBlog}
+      />
+    );
+
+    const viewButton = component.getByText("view");
+    fireEvent.click(viewButton);
+    const likeButton = component.getByText("Like");
+    fireEvent.click(likeButton);
+
+    expect(mockUpdateBlog.mock.calls).toHaveLength(1);
+  });
+
+  test("if the remove button is clicked once, the event handler is called once", () => {
+    const component = render(
+      <Blog
+        blog={blog}
+        user={mockUser}
+        updateBlog={mockUpdateBlog}
+        deleteBlog={mockDeleteBlog}
+      />
+    );
+
+    const viewButton = component.getByText("view");
+    fireEvent.click(viewButton);
+    const removeButton = component.getByText("remove");
+    fireEvent.click(removeButton);
+
+    expect(mockDeleteBlog.mock.calls).toHaveLength(1);
+  });
+
+  test("dont show remove button if usernames are not the same", () => {
+    const differentUser = {
+      username: "root",
+    };
+
+    const component = render(
+      <Blog
+        blog={blog}
+        user={differentUser}
+        updateBlog={mockUpdateBlog}
+        deleteBlog={mockDeleteBlog}
+      />
+    );
+
+    const viewButton = component.getByText("view");
+    fireEvent.click(viewButton);
+
+    expect(component.container).not.toHaveTextContent("remove");
+  });
 });
