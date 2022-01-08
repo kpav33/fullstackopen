@@ -95,8 +95,9 @@ describe("<Blog /> component tests", () => {
     fireEvent.click(viewButton);
     const likeButton = component.getByText("Like");
     fireEvent.click(likeButton);
+    fireEvent.click(likeButton);
 
-    expect(mockUpdateBlog.mock.calls).toHaveLength(1);
+    expect(mockUpdateBlog.mock.calls).toHaveLength(2);
   });
 
   test("if the remove button is clicked once, the event handler is called once", () => {
