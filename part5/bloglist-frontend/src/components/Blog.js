@@ -64,7 +64,9 @@ const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
           {/* This is why this little hack here is used, because the only time blog.user would be of type "string" is when there is a new blog created */}
           {(user.username === blog.user.username ||
             typeof blog.user === "string") && (
-            <button onClick={handleRemove}>remove</button>
+            <button id="remove-button" onClick={handleRemove}>
+              remove
+            </button>
           )}
         </div>
       )}
