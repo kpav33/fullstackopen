@@ -63,5 +63,19 @@ describe("Blog app", function () {
 
       cy.contains("Blog title Blog author");
     });
+
+    it("users can like a blog", function () {
+      cy.contains("create new blog").click();
+      cy.get("input[name='title']").type("Blog title");
+      cy.get("input[name='author']").type("Blog author");
+      cy.get("input[name='url']").type("www.example.com");
+      cy.contains("Create").click();
+
+      cy.contains("Blog title Blog author");
+      cy.contains("view").click();
+      cy.get("#like-button").click();
+      cy.get("#like-button").click();
+      cy.contains("2");
+    });
   });
 });
