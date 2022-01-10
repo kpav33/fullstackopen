@@ -119,4 +119,65 @@ describe("Blog app", function () {
       cy.get("#remove-button").should("not.exist");
     });
   });
+
+  describe("Blogs ordered by their number of likes", function () {
+    beforeEach(function () {
+      cy.login({ username: "John", password: "password" });
+
+      cy.createBlog({
+        title: "First title",
+        author: "First author",
+        url: "www.example.com",
+      });
+      cy.createBlog({
+        title: "Second title",
+        author: "Second author",
+        url: "www.example.com",
+      });
+      cy.createBlog({
+        title: "Third title",
+        author: "Third author",
+        url: "www.example.com",
+      });
+      cy.createBlog({
+        title: "Fourth title",
+        author: "Fourth author",
+        url: "www.example.com",
+      });
+
+      cy.contains("First title").parent().as("firstBlog");
+      cy.contains("Second title").parent().as("secondBlog");
+      cy.contains("Third title").parent().as("thirdBlog");
+      cy.contains("Fourth title").parent().as("fourthBlog");
+    });
+
+    it("blogs are ordered by their number of likes", function () {
+      cy.get("@firstBlog").contains("view").click();
+      cy.get("@firstBlog").get("#like-button").click();
+      cy.get("@firstBlog").contains("hide").click();
+
+      cy.get("@secondBlog").contains("view").click();
+      cy.get("@secondBlog").get("#like-button").click();
+      cy.get("@secondBlog").get("#like-button").click();
+      cy.get("@secondBlog").contains("hide").click();
+
+      cy.get("@thirdBlog").contains("view").click();
+      cy.get("@thirdBlog").get("#like-button").click();
+      cy.get("@thirdBlog").get("#like-button").click();
+      cy.get("@thirdBlog").get("#like-button").click();
+      cy.get("@thirdBlog").contains("hide").click();
+
+      cy.get("@fourthBlog").contains("view").click();
+      cy.get("@fourthBlog").get("#like-button").click();
+      cy.get("@fourthBlog").get("#like-button").click();
+      cy.get("@fourthBlog").get("#like-button").click();
+      cy.get("@fourthBlog").get("#like-button").click();
+      cy.get("@fourthBlog").contains("hide").click();
+
+      cy.get("#blogs>div").eq(0).should("contain", "Fourth title");
+      cy.get("#blogs>div").eq(1).should("contain", "Third title");
+      cy.get("#blogs>div").eq(2).should("contain", "Second title");
+      cy.get("#blogs>div").eq(3).should("contain", "First title");
+    });
+  });
 });
