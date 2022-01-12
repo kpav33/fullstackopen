@@ -23,7 +23,6 @@ const reducer = (state = initialState, action) => {
   console.log("state now: ", state);
   console.log("action", action);
   switch (action.type) {
-    // Add NEW_ANECDOTE type here
     case "NEW_ANECDOTE":
       return [...state, action.data];
     case "VOTE":
@@ -41,6 +40,7 @@ const reducer = (state = initialState, action) => {
   }
 };
 
+// Action creators
 export const voteFor = (id) => {
   return {
     type: "VOTE",
