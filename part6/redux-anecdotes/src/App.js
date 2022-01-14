@@ -1,26 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
 import AnecdoteForm from "./components/AnecdoteForm";
 import AnecdoteList from "./components/AnecdoteList";
 import Notification from "./components/Notification";
+import { useDispatch } from "react-redux";
+import {
+  showNotification,
+  hideNotification,
+} from "./reducers/notificationReducer";
 
 const App = () => {
-  const [notification, setNotification] = useState(null);
+  const dispatch = useDispatch();
 
   // Create a notification
   const addNotification = (message) => {
-    setNotification({ message });
+    dispatch(showNotification(message));
     setTimeout(() => {
-      setNotification(null);
-    }, 3000);
+      dispatch(hideNotification());
+    }, 5000);
   };
 
   return (
     <div>
       <h2>Anecdotes</h2>
-      <AnecdoteList />
-      <AnecdoteForm addNotification={addNotification} />
+      {<Notification />}
       <br />
-      {<Notification notification={notification} />}
+      <AnecdoteList addNotification={addNotification} />
+      <AnecdoteForm addNotification={addNotification} />
     </div>
   );
 };
