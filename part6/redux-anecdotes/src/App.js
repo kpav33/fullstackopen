@@ -8,7 +8,6 @@ import {
   showNotification,
   hideNotification,
 } from "./reducers/notificationReducer";
-import anecdoteService from "./services/anecdotes";
 import { initializeAnecdotes } from "./reducers/anecdoteReducer";
 
 const App = () => {

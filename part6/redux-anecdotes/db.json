@@ -34,6 +34,11 @@
       "content": "My new anecdote that is stored in the backend",
       "votes": 0,
       "id": "kIlVnKA"
+    },
+    {
+      "content": "Test redux-thunk create new anecdote",
+      "votes": 0,
+      "id": "0uNTWsa"
     }
   ]
 }
