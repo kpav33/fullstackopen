@@ -9,18 +9,34 @@ const notificationReducer = (state = null, action) => {
   }
 };
 
-export const showNotification = (notification) => {
-  return {
-    type: "SET_NOTIFICATION",
-    notification,
+export const showNotification = (notification, displayTime) => {
+  const displayTimeMiliSeconds = displayTime * 1000;
+
+  return async (dispatch) => {
+    dispatch({
+      type: "SET_NOTIFICATION",
+      notification,
+    });
+
+    setTimeout(() => {
+      dispatch({
+        type: "HIDE_NOTIFICATION",
+        notification: null,
+      });
+    }, displayTimeMiliSeconds);
   };
+  // return {
+  //   type: "SET_NOTIFICATION",
+  //   notification,
+  // };
 };
 
-export const hideNotification = () => {
-  return {
-    type: "HIDE_NOTIFICATION",
-    notification: null,
-  };
-};
+// Replaced by combining all logic in showNotification action creator by utisiling redux-thunk
+// export const hideNotification = () => {
+//   return {
+//     type: "HIDE_NOTIFICATION",
+//     notification: null,
+//   };
+// };
 
 export default notificationReducer;

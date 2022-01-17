@@ -4,10 +4,7 @@ import AnecdoteList from "./components/AnecdoteList";
 import Notification from "./components/Notification";
 import Filter from "./components/Filter";
 import { useDispatch } from "react-redux";
-import {
-  showNotification,
-  hideNotification,
-} from "./reducers/notificationReducer";
+import { showNotification } from "./reducers/notificationReducer";
 import { initializeAnecdotes } from "./reducers/anecdoteReducer";
 
 const App = () => {
@@ -24,10 +21,11 @@ const App = () => {
 
   // Create a notification
   const addNotification = (message) => {
-    dispatch(showNotification(message));
-    setTimeout(() => {
-      dispatch(hideNotification());
-    }, 5000);
+    // dispatch(showNotification(message));
+    // setTimeout(() => {
+    //   dispatch(hideNotification());
+    // }, 5000);
+    dispatch(showNotification(message, 5));
   };
 
   return (

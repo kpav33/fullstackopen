@@ -3,7 +3,7 @@
     {
       "content": "If it hurts, do it more often",
       "id": "47145",
-      "votes": 21
+      "votes": 0
     },
     {
       "content": "Adding manpower to a late software project makes it later!",
@@ -32,8 +32,13 @@
     },
     {
       "content": "test anecdote",
-      "votes": 16,
+      "votes": 0,
       "id": "fYajCUd"
+    },
+    {
+      "content": "My new anecdote that is stored in the backend",
+      "votes": 4,
+      "id": "CsnjUkR"
     }
   ]
 }
