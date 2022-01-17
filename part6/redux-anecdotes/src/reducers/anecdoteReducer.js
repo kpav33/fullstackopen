@@ -46,11 +46,19 @@ const anecdoteReducer = (state = [], action) => {
 };
 
 // Action creators
-export const voteFor = (id) => {
-  return {
-    type: "VOTE",
-    data: { id },
+export const voteFor = (anecdote) => {
+  return async (dispatch) => {
+    const updatedAnecdote = await anecdoteService.vote(anecdote.id, {
+      ...anecdote,
+      votes: anecdote.votes + 1,
+    });
+    // console.log("UPDATED ", updatedAnecdote);
+    dispatch({ type: "VOTE", data: updatedAnecdote });
   };
+  // return {
+  //   type: "VOTE",
+  //   data: { id },
+  // };
 };
 
 export const createAnecdote = (content) => {
