@@ -13,10 +13,14 @@ import { initializeAnecdotes } from "./reducers/anecdoteReducer";
 
 const App = () => {
   const dispatch = useDispatch();
+
+  // Get initial anecdotes from the JSON server
   useEffect(() => {
-    anecdoteService
-      .getAll()
-      .then((anecdotes) => dispatch(initializeAnecdotes(anecdotes)));
+    // Replaced with redux-thunk
+    // anecdoteService
+    //   .getAll()
+    //   .then((anecdotes) => dispatch(initializeAnecdotes(anecdotes)));
+    dispatch(initializeAnecdotes());
   }, [dispatch]);
 
   // Create a notification
