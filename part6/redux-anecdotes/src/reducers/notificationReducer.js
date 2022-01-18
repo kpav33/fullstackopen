@@ -9,6 +9,9 @@ const notificationReducer = (state = null, action) => {
   }
 };
 
+// Fix notification not showing up for the appropriate time bug, by using clearTimeout()
+let timerId;
+
 export const showNotification = (notification, displayTime) => {
   const displayTimeMiliSeconds = displayTime * 1000;
 
@@ -18,7 +21,11 @@ export const showNotification = (notification, displayTime) => {
       notification,
     });
 
-    setTimeout(() => {
+    // console.log("TIMER ", timerId);
+    clearTimeout(timerId);
+
+    timerId = setTimeout(() => {
+      // console.log("TIMER ", timerId);
       dispatch({
         type: "HIDE_NOTIFICATION",
         notification: null,
