@@ -6,6 +6,7 @@ import {
   useParams,
   useHistory,
   useRouteMatch,
+  Redirect,
 } from "react-router-dom";
 
 const Menu = () => {
@@ -41,6 +42,7 @@ const AnecdoteList = ({ anecdotes }) => (
 );
 
 const Anecdote = ({ anecdote }) => {
+  // Replaced by using useRouteMatch in the App component
   // const { id } = useParams();
   // const anecdote = anecdotes.find((item) => item.id === id);
 
@@ -202,11 +204,11 @@ const App = () => {
       <Menu />
       {notification && <p>A new anecdote {notification} created!</p>}
       <Switch>
-        <Route path="/anecdotes/:id">
-          <Anecdote anecdote={anecdote} />
-        </Route>
         <Route exact path="/">
           <AnecdoteList anecdotes={anecdotes} />
+        </Route>
+        <Route path="/anecdotes/:id">
+          {anecdote ? <Anecdote anecdote={anecdote} /> : <Redirect to="/" />}
         </Route>
         <Route path="/create">
           <CreateNew addNew={addNew} setNotification={setNotification} />
@@ -214,6 +216,8 @@ const App = () => {
         <Route path="/about">
           <About />
         </Route>
+        {/* Redirect to root page for non defined routes */}
+        <Redirect from="*" to="/" />
       </Switch>
       <Footer />
     </div>
