@@ -29,13 +29,15 @@ const Menu = () => {
   );
 };
 
-const AnecdoteList = ({ anecdotes }) => (
+const AnecdoteList = ({ anecdotes, vote }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
       {anecdotes.map((anecdote) => (
         <li key={anecdote.id}>
-          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>{" "}
+          <span>Votes: {anecdote.votes}</span>{" "}
+          <button onClick={() => vote(anecdote.id)}>Vote</button>
         </li>
       ))}
     </ul>
@@ -207,7 +209,7 @@ const App = () => {
       {notification && <p>A new anecdote {notification} created!</p>}
       <Switch>
         <Route exact path="/">
-          <AnecdoteList anecdotes={anecdotes} />
+          <AnecdoteList anecdotes={anecdotes} vote={vote} />
         </Route>
         <Route path="/anecdotes/:id">
           {anecdote ? <Anecdote anecdote={anecdote} /> : <Redirect to="/" />}
