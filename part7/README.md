@@ -13,3 +13,26 @@ npm install
 # Start the application
 npm start
 ```
+
+To start the country-hook application locally:
+
+```console
+# Install dependencies
+npm install
+
+# Start the application
+npm start
+```
+
+To start the ultimate-hooks application locally:
+
+```console
+# Install dependencies
+npm install
+
+# Start the JSON server
+npm run server
+
+# Start the application
+npm start
+```
