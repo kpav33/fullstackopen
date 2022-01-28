@@ -1,11 +1,18 @@
 import React, { useEffect } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import {
+  Redirect,
+  Route,
+  Switch,
+  useHistory,
+  useRouteMatch,
+} from "react-router-dom";
 // import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 // import Togglable from "./components/Togglable";
 // import NewBlog from "./components/NewBlog";
 import Home from "./pages/Home";
 import Users from "./pages/Users";
+import User from "./pages/User";
 import { useDispatch, useSelector } from "react-redux";
 import { showNotification } from "./reducers/notificationReducer";
 import {
@@ -21,8 +28,17 @@ const App = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.user);
+  const users = useSelector((state) => state.users);
+  // console.log(users);
 
   const blogFormRef = React.createRef();
+
+  const match = useRouteMatch("/users/:id");
+  const userMatch = match
+    ? users.find((item) => item.id === match.params.id)
+    : null;
+
+  const history = useHistory();
 
   useEffect(() => {
     dispatch(initializeBlogs());
@@ -89,6 +105,7 @@ const App = () => {
     // setUser(null);
     // storage.logoutUser();
     dispatch(logout());
+    history.push("/");
   };
 
   if (!user) {
@@ -149,6 +166,9 @@ const App = () => {
             handleLogout={handleLogout}
             byLikes={byLikes}
           />
+        </Route>
+        <Route path="/users/:id">
+          <User user={userMatch} />
         </Route>
         <Route path="/users">
           <Users />

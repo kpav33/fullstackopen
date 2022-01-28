@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const Users = () => {
@@ -14,7 +15,8 @@ const Users = () => {
         .sort((a, b) => b.blogs.length - a.blogs.length)
         .map((user) => (
           <div key={user.id}>
-            <span
+            <Link
+              to={`/users/${user.id}`}
               style={{
                 display: "inline-block",
                 width: "120px",
@@ -22,7 +24,7 @@ const Users = () => {
               }}
             >
               {user.name}
-            </span>{" "}
+            </Link>{" "}
             {user.blogs.length}
           </div>
         ))}
