@@ -1,8 +1,11 @@
 import React, { useEffect } from "react";
-import Blog from "./components/Blog";
+import { Redirect, Route, Switch } from "react-router-dom";
+// import Blog from "./components/Blog";
 import Notification from "./components/Notification";
-import Togglable from "./components/Togglable";
-import NewBlog from "./components/NewBlog";
+// import Togglable from "./components/Togglable";
+// import NewBlog from "./components/NewBlog";
+import Home from "./pages/Home";
+import Users from "./pages/Users";
 import { useDispatch, useSelector } from "react-redux";
 import { showNotification } from "./reducers/notificationReducer";
 import {
@@ -12,6 +15,7 @@ import {
   removeBlog,
 } from "./reducers/blogReducer";
 import { initializeUser, login, logout } from "./reducers/loginReducer";
+import { initializeUsers } from "./reducers/userReducer";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -23,6 +27,7 @@ const App = () => {
   useEffect(() => {
     dispatch(initializeBlogs());
     dispatch(initializeUser());
+    dispatch(initializeUsers());
   }, []);
 
   // Create a notification
@@ -132,7 +137,26 @@ const App = () => {
         {user.name} logged in <button onClick={handleLogout}>logout</button>
       </p>
 
-      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+      <Switch>
+        <Route exact path="/">
+          <Home
+            user={user}
+            blogFormRef={blogFormRef}
+            createBlog={createBlog}
+            blogs={blogs}
+            handleLike={handleLike}
+            handleRemove={handleRemove}
+            handleLogout={handleLogout}
+            byLikes={byLikes}
+          />
+        </Route>
+        <Route path="/users">
+          <Users />
+        </Route>
+        <Redirect from="*" to="/" />
+      </Switch>
+
+      {/* <Togglable buttonLabel="create new blog" ref={blogFormRef}>
         <NewBlog createBlog={createBlog} />
       </Togglable>
 
@@ -144,7 +168,7 @@ const App = () => {
           handleRemove={handleRemove}
           own={user.username === blog.user.username}
         />
-      ))}
+      ))} */}
     </div>
   );
 };
