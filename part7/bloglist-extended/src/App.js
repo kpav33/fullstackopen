@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
@@ -11,28 +11,18 @@ import {
   likeBlog,
   removeBlog,
 } from "./reducers/blogReducer";
-
-import loginService from "./services/login";
-import storage from "./utils/storage";
+import { initializeUser, login, logout } from "./reducers/loginReducer";
 
 const App = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
-
-  // const [blogs, setBlogs] = useState([]);
-  const [user, setUser] = useState(null);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const user = useSelector((state) => state.user);
 
   const blogFormRef = React.createRef();
 
   useEffect(() => {
     dispatch(initializeBlogs());
-  }, []);
-
-  useEffect(() => {
-    const user = storage.loadUser();
-    setUser(user);
+    dispatch(initializeUser());
   }, []);
 
   // Create a notification
@@ -44,25 +34,19 @@ const App = () => {
     dispatch(showNotification(notification));
   };
 
-  const handleLogin = async (event) => {
+  const handleLogin = (event) => {
     event.preventDefault();
-    try {
-      const user = await loginService.login({
-        username,
-        password,
-      });
 
-      setUsername("");
-      setPassword("");
-      setUser(user);
-      notifyWith(`${user.name} welcome back!`);
-      storage.saveUser(user);
-    } catch (exception) {
-      notifyWith("wrong username/password", "error");
-    }
+    const username = event.target.username.value;
+    const password = event.target.password.value;
+
+    event.target.username.value = "";
+    event.target.password.value = "";
+
+    dispatch(login({ username, password }));
   };
 
-  const createBlog = async (blog) => {
+  const createBlog = (blog) => {
     try {
       dispatch(createNewBlog(blog));
       blogFormRef.current.toggleVisibility();
@@ -76,7 +60,7 @@ const App = () => {
     }
   };
 
-  const handleLike = async (id) => {
+  const handleLike = (id) => {
     const blogToLike = blogs.find((b) => b.id === id);
     const likedBlog = {
       ...blogToLike,
@@ -86,7 +70,7 @@ const App = () => {
     dispatch(likeBlog(likedBlog));
   };
 
-  const handleRemove = async (id) => {
+  const handleRemove = (id) => {
     const blogToRemove = blogs.find((b) => b.id === id);
     const ok = window.confirm(
       `Remove blog ${blogToRemove.title} by ${blogToRemove.author}`
@@ -97,8 +81,9 @@ const App = () => {
   };
 
   const handleLogout = () => {
-    setUser(null);
-    storage.logoutUser();
+    // setUser(null);
+    // storage.logoutUser();
+    dispatch(logout());
   };
 
   if (!user) {
@@ -113,16 +98,20 @@ const App = () => {
             username
             <input
               id="username"
-              value={username}
-              onChange={({ target }) => setUsername(target.value)}
+              type="text"
+              name="username"
+              // value={username}
+              // onChange={({ target }) => setUsername(target.value)}
             />
           </div>
           <div>
             password
             <input
               id="password"
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
+              type="text"
+              name="password"
+              // value={password}
+              // onChange={({ target }) => setPassword(target.value)}
             />
           </div>
           <button id="login">login</button>
