@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 // import Blog from "./components/Blog";
 import Notification from "./components/Notification";
+import Menu from "./components/Menu";
 // import Togglable from "./components/Togglable";
 // import NewBlog from "./components/NewBlog";
 import Home from "./pages/Home";
@@ -150,13 +151,17 @@ const App = () => {
 
   return (
     <div>
+      <div>
+        <Menu />
+        <p style={{ display: "inline-block", marginBottom: "0px" }}>
+          {user.name} logged in <button onClick={handleLogout}>logout</button>
+        </p>
+      </div>
+
       <h2>blogs</h2>
 
       <Notification />
-
-      <p>
-        {user.name} logged in <button onClick={handleLogout}>logout</button>
-      </p>
+      <br />
 
       <Switch>
         <Route exact path="/">

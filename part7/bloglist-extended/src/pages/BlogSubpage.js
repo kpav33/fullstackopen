@@ -13,7 +13,7 @@ const BlogSubpage = ({ blog, handleLike, handleRemove, username }) => {
       <div>
         <div>{blog.url}</div>
         <div>
-          likes {blog.likes}
+          likes {blog.likes}{" "}
           <button onClick={() => handleLike(blog.id)}>like</button>
         </div>
         <div>{blog.user.name}</div>
