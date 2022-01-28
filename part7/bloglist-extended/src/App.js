@@ -13,6 +13,7 @@ import Notification from "./components/Notification";
 import Home from "./pages/Home";
 import Users from "./pages/Users";
 import User from "./pages/User";
+import BlogSubpage from "./pages/BlogSubpage";
 import { useDispatch, useSelector } from "react-redux";
 import { showNotification } from "./reducers/notificationReducer";
 import {
@@ -29,13 +30,17 @@ const App = () => {
   const blogs = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.user);
   const users = useSelector((state) => state.users);
-  // console.log(users);
 
   const blogFormRef = React.createRef();
 
-  const match = useRouteMatch("/users/:id");
-  const userMatch = match
-    ? users.find((item) => item.id === match.params.id)
+  const userMatch = useRouteMatch("/users/:id");
+  const userFound = userMatch
+    ? users.find((item) => item.id === userMatch.params.id)
+    : null;
+
+  const blogMatch = useRouteMatch("/blogs/:id");
+  const blogFound = blogMatch
+    ? blogs.find((item) => item.id === blogMatch.params.id)
     : null;
 
   const history = useHistory();
@@ -98,12 +103,11 @@ const App = () => {
     );
     if (ok) {
       dispatch(removeBlog(id));
+      history.push("/");
     }
   };
 
   const handleLogout = () => {
-    // setUser(null);
-    // storage.logoutUser();
     dispatch(logout());
     history.push("/");
   };
@@ -168,10 +172,18 @@ const App = () => {
           />
         </Route>
         <Route path="/users/:id">
-          <User user={userMatch} />
+          <User user={userFound} />
         </Route>
         <Route path="/users">
           <Users />
+        </Route>
+        <Route path="/blogs/:id">
+          <BlogSubpage
+            blog={blogFound}
+            handleLike={handleLike}
+            handleRemove={handleRemove}
+            username={user.username}
+          />
         </Route>
         <Redirect from="*" to="/" />
       </Switch>

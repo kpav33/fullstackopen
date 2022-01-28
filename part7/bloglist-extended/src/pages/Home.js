@@ -3,15 +3,7 @@ import Togglable from "../components/Togglable";
 import Blog from "../components/Blog";
 import NewBlog from "../components/NewBlog";
 
-const Home = ({
-  user,
-  blogFormRef,
-  blogs,
-  createBlog,
-  handleLike,
-  handleRemove,
-  byLikes,
-}) => {
+const Home = ({ blogFormRef, blogs, createBlog, byLikes }) => {
   return (
     <>
       <Togglable buttonLabel="create new blog" ref={blogFormRef}>
@@ -19,13 +11,7 @@ const Home = ({
       </Togglable>
 
       {blogs.sort(byLikes).map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          handleLike={handleLike}
-          handleRemove={handleRemove}
-          own={user.username === blog.user.username}
-        />
+        <Blog key={blog.id} blog={blog} />
       ))}
     </>
   );
