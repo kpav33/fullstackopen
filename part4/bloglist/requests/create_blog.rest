@@ -2,9 +2,16 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RlciIsImlkIjoiNjFkMmQzMGUxOTM1NmZmYzUxZjY2YmU4IiwiaWF0IjoxNjQxMjA2NTk0fQ.U7n9sCFdkYR103qO4HGrF2aIUnWZC_WwF7qkZou0HTM
 
+# {
+#     "title": "Book",
+#     "author": "Mike Stone",
+#     "url": "www.url.com",
+#     "likes": "7"
+# }
+
 {
-    "title": "Book",
-    "author": "Mike Stone",
-    "url": "www.url.com",
-    "likes": "7"
+"title": "Journey towards eternity",
+"author": "Jeffrey Hammond",
+"url": "www.eternity.com",
+"comments": ["Great post", "Learned a lot!"] 
 }

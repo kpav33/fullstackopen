@@ -56,6 +56,7 @@ blogsRouter.post("/", userExtractor, async (request, response, next) => {
       url: body.url,
       likes: body.likes || 0,
       user: user._id,
+      comments: body.comments || [],
     });
 
     // blog
@@ -105,6 +106,7 @@ blogsRouter.put("/:id", async (request, response, next) => {
       author: body.author,
       url: body.url,
       likes: body.likes,
+      comments: body.comments,
     };
 
     const newBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
