@@ -1,10 +1,15 @@
 import React from "react";
 
-const BlogSubpage = ({ blog, handleLike, handleRemove, username }) => {
+const BlogSubpage = ({
+  blog,
+  handleLike,
+  handleRemove,
+  handleComment,
+  username,
+}) => {
   if (!blog) {
     return null;
   }
-  // console.log(blog.comments);
 
   const own = username === blog.user.username;
 
@@ -20,6 +25,10 @@ const BlogSubpage = ({ blog, handleLike, handleRemove, username }) => {
         <div>added by {blog.user.name}</div>
         {own && <button onClick={() => handleRemove(blog.id)}>remove</button>}
         <h3>Comments</h3>
+        <form onSubmit={() => handleComment(event, blog.id)}>
+          <input id="comment" type="text" name="comment" />
+          <button>Add comment</button>
+        </form>
         {blog.comments.length ? (
           <ul>
             {blog.comments.map((item, index) => (

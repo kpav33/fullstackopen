@@ -6,11 +6,8 @@ import {
   useHistory,
   useRouteMatch,
 } from "react-router-dom";
-// import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import Menu from "./components/Menu";
-// import Togglable from "./components/Togglable";
-// import NewBlog from "./components/NewBlog";
 import Home from "./pages/Home";
 import Users from "./pages/Users";
 import User from "./pages/User";
@@ -22,11 +19,13 @@ import {
   createNewBlog,
   likeBlog,
   removeBlog,
+  commentBlog,
 } from "./reducers/blogReducer";
 import { initializeUser, login, logout } from "./reducers/loginReducer";
 import { initializeUsers } from "./reducers/userReducer";
 
 const App = () => {
+  // Get data from redux store
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.user);
@@ -34,6 +33,7 @@ const App = () => {
 
   const blogFormRef = React.createRef();
 
+  // Check for route match
   const userMatch = useRouteMatch("/users/:id");
   const userFound = userMatch
     ? users.find((item) => item.id === userMatch.params.id)
@@ -46,6 +46,7 @@ const App = () => {
 
   const history = useHistory();
 
+  // Initialize state values
   useEffect(() => {
     dispatch(initializeBlogs());
     dispatch(initializeUser());
@@ -61,6 +62,7 @@ const App = () => {
     dispatch(showNotification(notification));
   };
 
+  // Handle login
   const handleLogin = (event) => {
     event.preventDefault();
 
@@ -73,6 +75,7 @@ const App = () => {
     dispatch(login({ username, password }));
   };
 
+  // Create a blog
   const createBlog = (blog) => {
     try {
       dispatch(createNewBlog(blog));
@@ -87,6 +90,7 @@ const App = () => {
     }
   };
 
+  // Handle liking a blog
   const handleLike = (id) => {
     const blogToLike = blogs.find((b) => b.id === id);
     const likedBlog = {
@@ -97,6 +101,22 @@ const App = () => {
     dispatch(likeBlog(likedBlog));
   };
 
+  // Add a comment to a blog
+  const handleComment = (event, id) => {
+    event.preventDefault();
+    const comment = event.target.comment.value;
+    event.target.comment.value = "";
+
+    const blogToComment = blogs.find((b) => b.id === id);
+    const commentedBlog = {
+      ...blogToComment,
+      comments: [...blogToComment.comments, comment],
+    };
+
+    dispatch(commentBlog(commentedBlog));
+  };
+
+  // Remove a blog
   const handleRemove = (id) => {
     const blogToRemove = blogs.find((b) => b.id === id);
     const ok = window.confirm(
@@ -108,11 +128,13 @@ const App = () => {
     }
   };
 
+  // Handle user logout
   const handleLogout = () => {
     dispatch(logout());
     history.push("/");
   };
 
+  // Display login screen if user information is not found in local storage
   if (!user) {
     return (
       <div>
@@ -123,23 +145,11 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             username
-            <input
-              id="username"
-              type="text"
-              name="username"
-              // value={username}
-              // onChange={({ target }) => setUsername(target.value)}
-            />
+            <input id="username" type="text" name="username" />
           </div>
           <div>
             password
-            <input
-              id="password"
-              type="text"
-              name="password"
-              // value={password}
-              // onChange={({ target }) => setPassword(target.value)}
-            />
+            <input id="password" type="text" name="password" />
           </div>
           <button id="login">login</button>
         </form>
@@ -147,6 +157,7 @@ const App = () => {
     );
   }
 
+  // Sort by likes function
   const byLikes = (b1, b2) => b2.likes - b1.likes;
 
   return (
@@ -187,6 +198,7 @@ const App = () => {
             blog={blogFound}
             handleLike={handleLike}
             handleRemove={handleRemove}
+            handleComment={handleComment}
             username={user.username}
           />
         </Route>

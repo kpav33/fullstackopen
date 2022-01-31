@@ -15,6 +15,16 @@ const blogReducer = (state = [], action) => {
         likes: blogToChange.likes + 1,
       };
       return state.map((blog) => (blog.id !== id ? blog : changedBlog));
+    case "COMMENT":
+      const idToComment = action.data.id;
+      const blogToComment = state.find((n) => n.id === idToComment);
+      const commentedBlog = {
+        ...blogToComment,
+        comments: [...action.data.comments],
+      };
+      return state.map((blog) =>
+        blog.id !== idToComment ? blog : commentedBlog
+      );
     case "REMOVE":
       const idToRemove = action.data.id;
       return state.filter((blog) => blog.id !== idToRemove);
@@ -51,6 +61,13 @@ export const removeBlog = (id) => {
   return async (dispatch) => {
     await blogService.remove(id);
     dispatch({ type: "REMOVE", data: { id } });
+  };
+};
+
+export const commentBlog = (blog) => {
+  return async (dispatch) => {
+    const commentedBlog = await blogService.update(blog);
+    dispatch({ type: "COMMENT", data: commentedBlog });
   };
 };
 
