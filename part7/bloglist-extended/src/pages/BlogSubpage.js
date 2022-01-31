@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "react-bootstrap/Button";
 
 const BlogSubpage = ({
   blog,
@@ -20,14 +21,14 @@ const BlogSubpage = ({
         <div>{blog.url}</div>
         <div>
           likes {blog.likes}{" "}
-          <button onClick={() => handleLike(blog.id)}>like</button>
+          <Button onClick={() => handleLike(blog.id)}>like</Button>
         </div>
         <div>added by {blog.user.name}</div>
         {own && <button onClick={() => handleRemove(blog.id)}>remove</button>}
         <h3>Comments</h3>
         <form onSubmit={() => handleComment(event, blog.id)}>
           <input id="comment" type="text" name="comment" />
-          <button>Add comment</button>
+          <Button>Add comment</Button>
         </form>
         {blog.comments.length ? (
           <ul>

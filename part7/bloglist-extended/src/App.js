@@ -24,6 +24,8 @@ import {
 import { initializeUser, login, logout } from "./reducers/loginReducer";
 import { initializeUsers } from "./reducers/userReducer";
 
+import Container from "react-bootstrap/Container";
+
 const App = () => {
   // Get data from redux store
   const dispatch = useDispatch();
@@ -161,7 +163,7 @@ const App = () => {
   const byLikes = (b1, b2) => b2.likes - b1.likes;
 
   return (
-    <div>
+    <Container>
       <div>
         <Menu />
         <p style={{ display: "inline-block", marginBottom: "0px" }}>
@@ -218,7 +220,7 @@ const App = () => {
           own={user.username === blog.user.username}
         />
       ))} */}
-    </div>
+    </Container>
   );
 };
 
