@@ -21,14 +21,20 @@ const BlogSubpage = ({
         <div>{blog.url}</div>
         <div>
           likes {blog.likes}{" "}
-          <Button onClick={() => handleLike(blog.id)}>like</Button>
+          <Button onClick={() => handleLike(blog.id)} type="submit">
+            like
+          </Button>
         </div>
         <div>added by {blog.user.name}</div>
-        {own && <button onClick={() => handleRemove(blog.id)}>remove</button>}
-        <h3>Comments</h3>
+        {own && (
+          <Button variant="danger" onClick={() => handleRemove(blog.id)}>
+            remove
+          </Button>
+        )}
+        <h3 style={{ marginTop: "10px" }}>Comments</h3>
         <form onSubmit={() => handleComment(event, blog.id)}>
           <input id="comment" type="text" name="comment" />
-          <Button>Add comment</Button>
+          <Button type="submit">Add comment</Button>
         </form>
         {blog.comments.length ? (
           <ul>

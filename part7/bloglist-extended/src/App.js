@@ -25,6 +25,8 @@ import { initializeUser, login, logout } from "./reducers/loginReducer";
 import { initializeUsers } from "./reducers/userReducer";
 
 import Container from "react-bootstrap/Container";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
 const App = () => {
   // Get data from redux store
@@ -139,23 +141,38 @@ const App = () => {
   // Display login screen if user information is not found in local storage
   if (!user) {
     return (
-      <div>
+      <Container
+        style={{
+          marginTop: "20px",
+          marginBottom: "20px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
         <h2>login to application</h2>
 
         <Notification />
 
-        <form onSubmit={handleLogin}>
-          <div>
-            username
-            <input id="username" type="text" name="username" />
-          </div>
-          <div>
-            password
-            <input id="password" type="text" name="password" />
-          </div>
-          <button id="login">login</button>
-        </form>
-      </div>
+        <Form onSubmit={handleLogin}>
+          <Form.Group>
+            <Form.Label>username</Form.Label>
+            <Form.Control id="username" type="text" name="username" />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>password</Form.Label>
+            <Form.Control id="password" type="text" name="password" />
+          </Form.Group>
+          <Button
+            id="login"
+            variant="outline-primary"
+            type="submit"
+            style={{ marginTop: "10px" }}
+          >
+            login
+          </Button>
+        </Form>
+      </Container>
     );
   }
 
@@ -163,11 +180,19 @@ const App = () => {
   const byLikes = (b1, b2) => b2.likes - b1.likes;
 
   return (
-    <Container>
+    <Container
+      style={{
+        marginTop: "20px",
+        marginBottom: "20px",
+      }}
+    >
       <div>
         <Menu />
         <p style={{ display: "inline-block", marginBottom: "0px" }}>
-          {user.name} logged in <button onClick={handleLogout}>logout</button>
+          {user.name} logged in{" "}
+          <Button variant="secondary" onClick={handleLogout}>
+            logout
+          </Button>
         </p>
       </div>
 

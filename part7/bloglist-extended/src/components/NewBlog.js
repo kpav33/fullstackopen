@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import Button from "react-bootstrap/Button";
+
 const NewBlog = (props) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -47,7 +49,14 @@ const NewBlog = (props) => {
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button id="create">create</button>
+        <Button
+          variant="success"
+          type="submit"
+          id="create"
+          style={{ margin: "10px 0px 10px 0px" }}
+        >
+          create
+        </Button>
       </form>
     </div>
   );
