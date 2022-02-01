@@ -84,12 +84,21 @@ const typeDefs = gql`
     author: String!
     published: Int!
     genres: [String!]!
+    id: ID!
+  }
+
+  type Author {
+    name: String!
+    born: Int
+    bookCount: Int!
+    id: ID!
   }
 
   type Query {
     bookCount: Int!
     authorCount: Int!
     allBooks: [Book!]!
+    allAuthors: [Author!]!
   }
 `;
 
@@ -98,6 +107,18 @@ const resolvers = {
     bookCount: () => books.length,
     authorCount: () => authors.length,
     allBooks: () => books,
+    // allAuthors: () =>
+    //   authors.map((author) => {
+    //     return {
+    //       name: author.name,
+    //       bookCount: books.filter((item) => item.author === author.name).length,
+    //     };
+    //   }),
+    allAuthors: () => authors,
+  },
+  Author: {
+    bookCount: (root) =>
+      books.filter((item) => item.author === root.name).length,
   },
 };
 
