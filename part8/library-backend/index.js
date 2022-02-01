@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require("apollo-server");
+const { ApolloServer, UserInputError, gql } = require("apollo-server");
 const { v1: uuid } = require("uuid");
 
 let authors = [
@@ -79,6 +79,8 @@ let books = [
   },
 ];
 
+// GraphQL schema
+// The schema describes what queries the client can send to the server, what kind of parameters the queries can have, and what kind of data the queries return.
 const typeDefs = gql`
   type Book {
     title: String!
@@ -109,10 +111,13 @@ const typeDefs = gql`
       published: Int!
       genres: [String!]!
     ): Book
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `;
 
+// Define how should graphQL respond to queries (what data to return) with resolvers
 const resolvers = {
+  // Query resolvers define how GraphQL queries are responded to
   Query: {
     bookCount: () => books.length,
     authorCount: () => authors.length,
@@ -143,12 +148,20 @@ const resolvers = {
     //   }),
     allAuthors: () => authors,
   },
+  // Change the default resolver of the bookCount field for the Author type
   Author: {
     bookCount: (root) =>
       books.filter((item) => item.author === root.name).length,
   },
+  // Mutations are operations that cause a change
   Mutation: {
     addBook: (root, args) => {
+      if (books.find((book) => book.title === args.title)) {
+        throw new UserInputError("Name must be unique", {
+          invalidArgs: args.name,
+        });
+      }
+
       const book = { ...args, id: uuid() };
       books = books.concat(book);
 
@@ -162,6 +175,19 @@ const resolvers = {
       }
 
       return book;
+    },
+    editAuthor: (root, args) => {
+      const author = authors.find((author) => author.name === args.name);
+
+      if (!author) {
+        return null;
+      }
+
+      const updatedAuthor = { ...author, born: args.setBornTo };
+      authors = authors.map((author) =>
+        author.name === args.name ? updatedAuthor : author
+      );
+      return updatedAuthor;
     },
   },
 };
