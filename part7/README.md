@@ -36,3 +36,15 @@ npm run server
 # Start the application
 npm start
 ```
+
+To start the bloglist-extended application locally:
+
+Before starting the application, you must first start the backend, which is located in the part4 bloglist folder. Check the part4 README.md for instructions how to start the backend.
+
+```console
+# Install dependencies
+npm install
+
+# Start the application
+npm start
+```
