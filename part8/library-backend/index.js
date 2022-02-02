@@ -157,8 +157,8 @@ const resolvers = {
   Mutation: {
     addBook: (root, args) => {
       if (books.find((book) => book.title === args.title)) {
-        throw new UserInputError("Name must be unique", {
-          invalidArgs: args.name,
+        throw new UserInputError("Title must be unique", {
+          invalidArgs: args.title,
         });
       }
 
