@@ -4,7 +4,7 @@ This part of the course is about GraphQL, Facebook's alternative to REST for com
 
 ## Applications
 
-To start the routed-anecdotes application locally:
+To start the library-backend application locally:
 
 ```console
 # Install dependencies
