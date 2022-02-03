@@ -34,6 +34,10 @@ const Authors = ({ show, setError }) => {
     setBornYear("");
   };
 
+  const handleChange = (event) => {
+    setName(event.target.value);
+  };
+
   return (
     <div>
       <h2>authors</h2>
@@ -55,13 +59,24 @@ const Authors = ({ show, setError }) => {
       </table>
       <h3>Set birthyear</h3>
       <form onSubmit={submit}>
-        <div>
+        {/* <div>
           name
           <input
             value={name}
             onChange={({ target }) => setName(target.value)}
           />
-        </div>
+        </div> */}
+        <select defaultValue={name} onChange={handleChange}>
+          {/* <option value="Robert Martin">Grapefruit</option>
+          <option value="Martin Fowler">Lime</option>
+          <option value="Sandi Metz">Coconut</option>
+          <option value="Joshua Kerievsky">Joshua Kerievsky</option> */}
+          {result.data.allAuthors.map((author) => (
+            <option key={author.name} value={author.name}>
+              {author.name}
+            </option>
+          ))}
+        </select>
         <div>
           born
           <input
