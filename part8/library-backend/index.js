@@ -194,8 +194,14 @@ const resolvers = {
 
       author.born = args.setBornTo;
 
-      await Author.findByIdAndUpdate(author._id, author, { new: true });
-      return author;
+      try {
+        await Author.findByIdAndUpdate(author._id, author, { new: true });
+        return author;
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        });
+      }
     },
   },
 };
