@@ -1,5 +1,27 @@
+require("dotenv").config();
 const { ApolloServer, UserInputError, gql } = require("apollo-server");
-const { v1: uuid } = require("uuid");
+// const { v1: uuid } = require("uuid");
+const mongoose = require("mongoose");
+const Author = require("./models/author");
+const Book = require("./models/book");
+
+// console.log(process.env.MONGODB_URI);
+const MONGODB_URI = process.env.MONGODB_URI;
+console.log("Connecting to ", MONGODB_URI);
+
+mongoose
+  .connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+  })
+  .then(() => {
+    console.log("Connected to MongoDB!");
+  })
+  .catch((error) => {
+    console.log("Error connecting to MongoDB: ", error.message);
+  });
 
 let authors = [
   {
@@ -84,7 +106,7 @@ let books = [
 const typeDefs = gql`
   type Book {
     title: String!
-    author: String!
+    author: Author!
     published: Int!
     genres: [String!]!
     id: ID!
@@ -119,8 +141,9 @@ const typeDefs = gql`
 const resolvers = {
   // Query resolvers define how GraphQL queries are responded to
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
+    bookCount: () => Book.collection.countDocuments(),
+    authorCount: () => Author.collection.countDocuments(),
+    // Skip for now
     allBooks: (root, args) => {
       if (args.author) {
         if (args.genre) {
@@ -146,36 +169,43 @@ const resolvers = {
     //       bookCount: books.filter((item) => item.author === author.name).length,
     //     };
     //   }),
-    allAuthors: () => authors,
+    allAuthors: () => Author.find({}),
   },
   // Change the default resolver of the bookCount field for the Author type
+  // Skip for now
   Author: {
     bookCount: (root) =>
       books.filter((item) => item.author === root.name).length,
   },
   // Mutations are operations that cause a change
   Mutation: {
-    addBook: (root, args) => {
-      if (books.find((book) => book.title === args.title)) {
-        throw new UserInputError("Title must be unique", {
-          invalidArgs: args.title,
+    addBook: async (root, args) => {
+      const authorExists = await Author.findOne({ name: args.author });
+
+      if (authorExists === null) {
+        const author = new Author({ name: args.author });
+        try {
+          await author.save();
+        } catch (error) {
+          throw new UserInputError(error.message, {
+            invalidArgs: args,
+          });
+        }
+      }
+
+      const foundAuthor = await Author.findOne({ name: args.author });
+      const book = new Book({ ...args, author: foundAuthor });
+
+      try {
+        const response = await book.save();
+        return response;
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
         });
       }
-
-      const book = { ...args, id: uuid() };
-      books = books.concat(book);
-
-      const findAuthor = authors.find((author) => author.name === args.author);
-      if (!findAuthor) {
-        const author = {
-          name: args.author,
-          id: uuid(),
-        };
-        authors = authors.concat(author);
-      }
-
-      return book;
     },
+    // Skip for now
     editAuthor: (root, args) => {
       const author = authors.find((author) => author.name === args.name);
 
