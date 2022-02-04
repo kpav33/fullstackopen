@@ -23,32 +23,6 @@ mongoose
     console.log("Error connecting to MongoDB: ", error.message);
   });
 
-let authors = [
-  {
-    name: "Robert Martin",
-    id: "afa51ab0-344d-11e9-a414-719c6709cf3e",
-    born: 1952,
-  },
-  {
-    name: "Martin Fowler",
-    id: "afa5b6f0-344d-11e9-a414-719c6709cf3e",
-    born: 1963,
-  },
-  {
-    name: "Fyodor Dostoevsky",
-    id: "afa5b6f1-344d-11e9-a414-719c6709cf3e",
-    born: 1821,
-  },
-  {
-    name: "Joshua Kerievsky", // birthyear not known
-    id: "afa5b6f2-344d-11e9-a414-719c6709cf3e",
-  },
-  {
-    name: "Sandi Metz", // birthyear not known
-    id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
-  },
-];
-
 let books = [
   {
     title: "Clean Code",
@@ -143,7 +117,7 @@ const resolvers = {
   Query: {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
-    // Skip for now
+    // Skip part with the parameters included
     allBooks: (root, args) => {
       if (args.author) {
         if (args.genre) {
@@ -160,7 +134,7 @@ const resolvers = {
         return books.filter((book) => book.genres.includes(args.genre));
       }
 
-      return books;
+      return Book.find({});
     },
     // allAuthors: () =>
     //   authors.map((author) => {
@@ -172,15 +146,21 @@ const resolvers = {
     allAuthors: () => Author.find({}),
   },
   // Change the default resolver of the bookCount field for the Author type
-  // Skip for now
+  // https://docs.mongodb.com/v4.2/reference/method/db.collection.countDocuments/#definition
   Author: {
-    bookCount: (root) =>
-      books.filter((item) => item.author === root.name).length,
+    bookCount: (root) => Book.countDocuments({ author: root._id }),
   },
   // Mutations are operations that cause a change
   Mutation: {
     addBook: async (root, args) => {
+      const bookExists = await Book.findOne({ title: args.title });
       const authorExists = await Author.findOne({ name: args.author });
+
+      if (bookExists) {
+        throw new UserInputError("Book already in database", {
+          invalidArgs: args.title,
+        });
+      }
 
       if (authorExists === null) {
         const author = new Author({ name: args.author });
@@ -205,19 +185,17 @@ const resolvers = {
         });
       }
     },
-    // Skip for now
-    editAuthor: (root, args) => {
-      const author = authors.find((author) => author.name === args.name);
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name });
 
       if (!author) {
         return null;
       }
 
-      const updatedAuthor = { ...author, born: args.setBornTo };
-      authors = authors.map((author) =>
-        author.name === args.name ? updatedAuthor : author
-      );
-      return updatedAuthor;
+      author.born = args.setBornTo;
+
+      await Author.findByIdAndUpdate(author._id, author, { new: true });
+      return author;
     },
   },
 };
