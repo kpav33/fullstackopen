@@ -5,7 +5,6 @@ import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import Notify from "./components/Notify";
-// import LoginForm from "./components/LoginForm";
 import Login from "./components/Login";
 
 const App = () => {
@@ -15,8 +14,6 @@ const App = () => {
     localStorage.getItem("library-user-token") || null
   );
   const client = useApolloClient();
-  // console.log(token);
-  // console.log(localStorage);
 
   const notify = (message) => {
     setErrorMessage(message);
@@ -24,16 +21,6 @@ const App = () => {
       setErrorMessage(null);
     }, 5000);
   };
-
-  // if (!token) {
-  //   return (
-  //     <div>
-  //       <Notify errorMessage={errorMessage} />
-  //       <h2>Login</h2>
-  //       <LoginForm setToken={setToken} setError={notify} />
-  //     </div>
-  //   );
-  // }
 
   const logout = () => {
     setToken(null);
