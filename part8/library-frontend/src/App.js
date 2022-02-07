@@ -58,7 +58,7 @@ const App = () => {
         setPage={setPage}
       />
 
-      <NewBook show={page === "add"} setError={notify} />
+      {token && <NewBook show={page === "add"} setError={notify} />}
     </div>
   );
 };

@@ -1,16 +1,39 @@
-import React, { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { CREATE_BOOK, ALL_BOOKS, ALL_AUTHORS } from "../queries";
+import React, { useState, useEffect } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import {
+  CREATE_BOOK,
+  ALL_BOOKS,
+  ALL_AUTHORS,
+  FILTERED_BOOKS,
+  ME,
+} from "../queries";
 
 const NewBook = ({ show, setError }) => {
+  const result = useQuery(ME);
+  const [favoriteGenre, setFavoriteGenre] = useState("");
+
+  useEffect(() => {
+    if (result.data) {
+      setFavoriteGenre(result.data.me.favoriteGenre);
+    }
+  }, [result.data]);
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [published, setPublished] = useState("");
   const [genre, setGenre] = useState("");
   const [genres, setGenres] = useState([]);
 
+  // Refetch some queries when a new book is added, to keep graphQL cache in sync with the backend
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    refetchQueries: [
+      { query: ALL_BOOKS },
+      { query: ALL_AUTHORS },
+      {
+        query: FILTERED_BOOKS,
+        variables: { genre: favoriteGenre },
+      },
+    ],
     onError: (error) => {
       setError(error.graphQLErrors[0].message);
     },
