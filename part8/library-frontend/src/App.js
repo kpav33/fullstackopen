@@ -37,16 +37,10 @@ const App = () => {
 
     const dataInStore = client.readQuery({ query: ALL_BOOKS });
     if (!includedIn(dataInStore.allBooks, addedBook)) {
-      // console.log(dataInStore);
       client.writeQuery({
         query: ALL_BOOKS,
         data: { allBooks: dataInStore.allBooks.concat(addedBook) },
       });
-      // console.log(dataInStore.allBooks.concat(addedBook));
-      // console.log(client.readQuery({ query: ALL_BOOKS }));
-      // client.refetchQueries({
-      //   include: [ALL_BOOKS],
-      // });
     }
   };
 
