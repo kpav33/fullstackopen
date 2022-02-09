@@ -33,6 +33,8 @@ mongoose
     console.log("Error connecting to MongoDB: ", error.message);
   });
 
+// mongoose.set("debug", true);
+
 // GraphQL schema
 // The schema describes what queries the client can send to the server, what kind of parameters the queries can have, and what kind of data the queries return.
 const typeDefs = gql`
@@ -115,14 +117,37 @@ const resolvers = {
 
       return Book.find({}).populate("author");
     },
-    allAuthors: () => Author.find({}),
+    allAuthors: async (root, args, context) => {
+      // console.log("Author.find");
+      const authors = await Author.find({});
+      const books = await Book.find({});
+      const nbooks = {};
+      books.forEach((b) => {
+        nbooks[b.author] = (nbooks[b.author] || 0) + 1;
+      });
+      const nauthors = authors.map((a) => {
+        const bookCount = nbooks[a._id];
+        return {
+          ...a.toObject(),
+          bookCount,
+          id: a._id,
+        };
+      });
+      return nauthors;
+      // Before n + 1 solution
+      // return Author.find({});
+    },
     me: (root, args, context) => context.currentUser,
   },
   // Change the default resolver of the bookCount field for the Author type
   // https://docs.mongodb.com/v4.2/reference/method/db.collection.countDocuments/#definition
-  Author: {
-    bookCount: (root) => Book.countDocuments({ author: root._id }),
-  },
+  // Before n + 1 solution
+  // Author: {
+  //   bookCount: (root) => {
+  //     console.log("Book.countDocuments");
+  //     return Book.countDocuments({ author: root._id });
+  //   },
+  // },
   // Mutations are operations that cause a change
   Mutation: {
     addBook: async (root, args, context) => {
@@ -178,12 +203,19 @@ const resolvers = {
       }
 
       const author = await Author.findOne({ name: args.name });
+      // Added to work with n + 1 solution
+      const books = await Book.find({});
+      const bookCount = books.filter(
+        (book) => book.author === author.id
+      ).length;
 
       if (!author) {
         return null;
       }
 
       author.born = args.setBornTo;
+      // Added to work with n + 1 solution
+      author.bookCount = bookCount;
 
       try {
         await Author.findByIdAndUpdate(author._id, author, { new: true });
