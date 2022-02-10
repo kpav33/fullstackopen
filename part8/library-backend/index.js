@@ -88,6 +88,8 @@ const typeDefs = gql`
   }
 `;
 
+let books;
+
 // Define how should graphQL respond to queries (what data to return) with resolvers
 const resolvers = {
   // Query resolvers define how GraphQL queries are responded to
@@ -117,25 +119,13 @@ const resolvers = {
 
       return Book.find({}).populate("author");
     },
-    allAuthors: async (root, args, context) => {
-      // console.log("Author.find");
-      const authors = await Author.find({});
-      const books = await Book.find({});
-      const nbooks = {};
-      books.forEach((b) => {
-        nbooks[b.author] = (nbooks[b.author] || 0) + 1;
-      });
-      const nauthors = authors.map((a) => {
-        const bookCount = nbooks[a._id];
-        return {
-          ...a.toObject(),
-          bookCount,
-          id: a._id,
-        };
-      });
-      return nauthors;
+    allAuthors: async () => {
       // Before n + 1 solution
       // return Author.find({});
+      // Solution for the exercise 8.26. from the example solution
+      // Refactored my code to this, because the example solution is much cleaner and simpler than the one I originally came up with
+      books = await Book.find();
+      return Author.find({});
     },
     me: (root, args, context) => context.currentUser,
   },
@@ -148,6 +138,12 @@ const resolvers = {
   //     return Book.countDocuments({ author: root._id });
   //   },
   // },
+  // Solution for the exercise 8.26. from the example solution
+  // Refactored my code to this, because the example solution is much cleaner and simpler than the one I originally came up with
+  Author: {
+    bookCount: async (root) =>
+      books.filter((b) => String(b.author) === String(root.id)).length,
+  },
   // Mutations are operations that cause a change
   Mutation: {
     addBook: async (root, args, context) => {
@@ -202,12 +198,13 @@ const resolvers = {
         throw new AuthenticationError("not authenticated");
       }
 
+      books = await Book.find();
       const author = await Author.findOne({ name: args.name });
       // Added to work with n + 1 solution
-      const books = await Book.find({});
-      const bookCount = books.filter(
-        (book) => book.author === author.id
-      ).length;
+      // const books = await Book.find({});
+      // const bookCount = books.filter(
+      //   (book) => book.author === author.id
+      // ).length;
 
       if (!author) {
         return null;
@@ -215,7 +212,7 @@ const resolvers = {
 
       author.born = args.setBornTo;
       // Added to work with n + 1 solution
-      author.bookCount = bookCount;
+      // author.bookCount = bookCount;
 
       try {
         await Author.findByIdAndUpdate(author._id, author, { new: true });
