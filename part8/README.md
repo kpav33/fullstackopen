@@ -29,3 +29,5 @@ npm install
 # Start the application
 npm start
 ```
+
+You can use user `root` with the password `secret` to login into the application and get access to its full functionality.
